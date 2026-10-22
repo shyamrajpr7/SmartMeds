@@ -1,0 +1,63 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.backends.legacy:build"
+
+[project]
+name = "smartmeds"
+version = "0.1.0"
+description = "An intelligent medication management system"
+readme = "README.md"
+license = { file = "LICENSE" }
+authors = [{ name = "shyamrajpr7" }]
+requires-python = ">=3.9"
+keywords = ["medication", "health", "management", "reminder"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: End Users/Desktop",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Topic :: Scientific/Engineering :: Medical Science Apps.",
+]
+dependencies = [
+    "click>=8.1.0",
+    "rich>=13.0.0",
+    "pydantic>=2.0.0",
+    "schedule>=1.2.0",
+    "SQLAlchemy>=2.0.0",
+    "cryptography>=41.0.0",
+    "python-dateutil>=2.8.0",
+    "tabulate>=0.9.0",
+    "colorama>=0.4.6",
+]
+
+[project.scripts]
+smartmeds = "smartmeds.cli.commands:main"
+
+[project.urls]
+Homepage = "https://github.com/shyamrajpr7/SmartMeds"
+Repository = "https://github.com/shyamrajpr7/SmartMeds.git"
+Issues = "https://github.com/shyamrajpr7/SmartMeds/issues"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["smartmeds*"]
+
+[tool.black]
+line-length = 88
+target-version = ["py39", "py310", "py311"]
+
+[tool.isort]
+profile = "black"
+line_length = 88
+
+[tool.mypy]
+python_version = "3.9"
+strict = true
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-v --cov=smartmeds --cov-report=term-missing"
