@@ -3,37 +3,39 @@
 {% block title %}Log in · SmartMeds{% endblock %}
 
 {% block content %}
-<div class="row justify-content-center">
-  <div class="col-12 col-md-7 col-lg-5">
-    <div class="card shadow-sm">
-      <div class="card-body p-4">
-        <h1 class="h4 mb-1">Welcome back</h1>
-        <p class="text-muted mb-4">Log in to manage your prescriptions and profile.</p>
+<div class="auth-wrap">
+  <div class="auth-card">
+    <div class="card">
+      <div class="card-body">
+        <h1 class="auth-title">Welcome back</h1>
+        <p class="auth-subtitle">Log in to manage your prescriptions and profile.</p>
 
         {% if form.non_field_errors %}
-          <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+          <div class="alert alert-danger" role="alert">
+            <div class="alert-content">{{ form.non_field_errors }}</div>
+          </div>
         {% endif %}
 
-        <form method="post" novalidate>
+        <form method="post" novalidate class="stack">
           {% csrf_token %}
           {% if next %}<input type="hidden" name="next" value="{{ next }}">{% endif %}
 
-          <div class="mb-3">
+          <div class="field">
             <label for="{{ form.username.id_for_label }}" class="form-label">Username</label>
             {{ form.username }}
-            {% for error in form.username.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
+            {% for error in form.username.errors %}<div class="text-danger">{{ error }}</div>{% endfor %}
           </div>
 
-          <div class="mb-3">
+          <div class="field">
             <label for="{{ form.password.id_for_label }}" class="form-label">Password</label>
             {{ form.password }}
-            {% for error in form.password.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
+            {% for error in form.password.errors %}<div class="text-danger">{{ error }}</div>{% endfor %}
           </div>
 
-          <button type="submit" class="btn btn-primary w-100">Log in</button>
+          <button type="submit" class="btn btn-primary btn-block">Log in</button>
         </form>
 
-        <div class="d-flex justify-content-between mt-3 small">
+        <div class="auth-links">
           <a href="{% url 'accounts:password_reset' %}">Forgot password?</a>
           <a href="{% url 'accounts:register' %}">Create an account</a>
         </div>

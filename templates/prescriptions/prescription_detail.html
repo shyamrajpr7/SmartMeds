@@ -3,89 +3,87 @@
 {% block title %}{{ prescription.doctor_name|default:"Prescription" }} · SmartMeds{% endblock %}
 
 {% block content %}
-<div class="d-flex flex-wrap justify-content-between align-items-start gap-2 mb-3">
-  <div>
-    <h1 class="h3 mb-1">{{ prescription.doctor_name|default:"Prescription" }}</h1>
-    <p class="text-muted mb-0">
+<header class="page-header">
+  <div class="page-heading">
+    <h1>{{ prescription.doctor_name|default:"Prescription" }}</h1>
+    <p class="page-subtitle">
       {{ prescription.hospital_clinic|default:"No clinic recorded" }}
       {% if prescription.date_issued %} · {{ prescription.date_issued }}{% endif %}
     </p>
   </div>
-  <div class="d-flex flex-wrap gap-2">
-    <a href="{% url 'prescriptions:list' %}" class="btn btn-outline-secondary">Back to vault</a>
-    <a href="{% url 'prescriptions:edit' prescription.pk %}" class="btn btn-outline-primary">Edit</a>
-    <a href="{% url 'prescriptions:delete' prescription.pk %}" class="btn btn-outline-danger">Delete</a>
+  <div class="page-actions">
+    <a href="{% url 'prescriptions:list' %}" class="btn btn-outline">Back to vault</a>
+    <a href="{% url 'prescriptions:edit' prescription.pk %}" class="btn btn-primary">Edit</a>
+    <a href="{% url 'prescriptions:delete' prescription.pk %}" class="btn btn-danger">Delete</a>
   </div>
-</div>
+</header>
 
-<div class="row g-3">
-  <div class="col-12 col-lg-5">
-    <div class="card shadow-sm h-100">
-      <div class="card-header bg-white fw-semibold">
-        <i class="bi bi-file-medical me-1"></i>Attachment
-      </div>
-      <div class="card-body">
-        {% if prescription.file %}
-          {% if prescription.file_is_image %}
-            <img src="{{ prescription.file.url }}" alt="Prescription image" class="img-fluid rounded border">
-          {% else %}
-            <a href="{{ prescription.file.url }}" target="_blank" rel="noopener" class="btn btn-outline-primary">
-              <i class="bi bi-file-earmark-pdf me-1"></i>Open PDF
-            </a>
-          {% endif %}
+<div class="detail-grid">
+  <div class="card">
+    <div class="card-header">
+      <h2>Attachment</h2>
+    </div>
+    <div class="card-body">
+      {% if prescription.file %}
+        {% if prescription.file_is_image %}
+          <img src="{{ prescription.file.url }}" alt="Prescription image" class="attachment-image">
         {% else %}
-          <p class="text-muted mb-0">No file attached.</p>
+          <a href="{{ prescription.file.url }}" target="_blank" rel="noopener" class="btn btn-outline">
+            Open PDF
+          </a>
         {% endif %}
-      </div>
+      {% else %}
+        <p class="muted">No file attached.</p>
+      {% endif %}
     </div>
   </div>
 
-  <div class="col-12 col-lg-7">
-    <div class="card shadow-sm h-100">
-      <div class="card-header bg-white fw-semibold">
-        <i class="bi bi-capsule me-1"></i>Medicines
-      </div>
-      <div class="card-body">
-        {% if prescription.medicines.all %}
-          <div class="table-responsive">
-            <table class="table table-sm align-middle mb-0">
-              <thead>
+  <div class="card">
+    <div class="card-header">
+      <h2>Medicines</h2>
+    </div>
+    <div class="table-wrap">
+      {% if prescription.medicines.all %}
+        <table class="table table-medicines">
+          <thead>
+            <tr>
+              <th scope="col">Name</th>
+              <th scope="col">Dosage</th>
+              <th scope="col">Frequency</th>
+              <th scope="col">Duration</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for med in prescription.medicines.all %}
+              <tr>
+                <td class="fw-semibold">{{ med.name }}</td>
+                <td>{{ med.dosage|default:"—" }}</td>
+                <td>{{ med.frequency|default:"—" }}</td>
+                <td>{{ med.duration|default:"—" }}</td>
+              </tr>
+              {% if med.instructions %}
                 <tr>
-                  <th>Name</th>
-                  <th>Dosage</th>
-                  <th>Frequency</th>
-                  <th>Duration</th>
+                  <td colspan="4" class="muted small">{{ med.instructions }}</td>
                 </tr>
-              </thead>
-              <tbody>
-                {% for med in prescription.medicines.all %}
-                  <tr>
-                    <td class="fw-semibold">{{ med.name }}</td>
-                    <td>{{ med.dosage|default:"—" }}</td>
-                    <td>{{ med.frequency|default:"—" }}</td>
-                    <td>{{ med.duration|default:"—" }}</td>
-                  </tr>
-                  {% if med.instructions %}
-                    <tr>
-                      <td colspan="4" class="text-muted small pt-0">{{ med.instructions }}</td>
-                    </tr>
-                  {% endif %}
-                {% endfor %}
-              </tbody>
-            </table>
-          </div>
-        {% else %}
-          <p class="text-muted mb-0">No medicines listed.</p>
-        {% endif %}
-      </div>
+              {% endif %}
+            {% endfor %}
+          </tbody>
+        </table>
+      {% else %}
+        <div class="card-body">
+          <p class="muted">No medicines listed.</p>
+        </div>
+      {% endif %}
     </div>
   </div>
 
   {% if prescription.notes %}
-    <div class="col-12">
-      <div class="card shadow-sm">
-        <div class="card-header bg-white fw-semibold">Notes</div>
-        <div class="card-body">{{ prescription.notes|linebreaksbr }}</div>
+    <div class="card span-full">
+      <div class="card-header">
+        <h2>Notes</h2>
+      </div>
+      <div class="card-body">
+        <div class="notes-body">{{ prescription.notes|linebreaksbr }}</div>
       </div>
     </div>
   {% endif %}

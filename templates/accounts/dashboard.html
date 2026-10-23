@@ -3,89 +3,118 @@
 {% block title %}Dashboard · SmartMeds{% endblock %}
 
 {% block content %}
-<div class="row g-3">
-  <div class="col-12">
-    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
-      <div>
-        <h1 class="h3 mb-1">Hello, {{ profile.full_name|default:user.get_username }}</h1>
-        <p class="text-muted mb-0">Your medical dashboard</p>
-      </div>
-      <a href="{% url 'accounts:profile' %}" class="btn btn-outline-primary">
-        <i class="bi bi-pencil-square me-1"></i>Edit profile
-      </a>
+<header class="page-header">
+  <div class="page-heading">
+    <h1>Hello, {{ profile.full_name|default:user.get_username }}</h1>
+    <p class="page-subtitle">Your medical dashboard</p>
+  </div>
+  <div class="page-actions">
+    <form class="search-form" method="get" action="{% url 'prescriptions:list' %}" role="search">
+      <label class="sr-only" for="dashboard-search">Search prescriptions</label>
+      <input class="search-input" id="dashboard-search" type="search" name="q"
+             placeholder="Search prescriptions..." value="">
+      <button type="submit" class="btn btn-outline">Search</button>
+    </form>
+    <a href="{% url 'accounts:profile' %}" class="btn btn-primary">Edit profile</a>
+  </div>
+</header>
+
+{% if not profile.is_complete %}
+  <div class="alert alert-warning" role="alert">
+    <div class="alert-content">
+      Your profile is incomplete. Doctors you share records with will see
+      missing allergies and emergency contact details.
+    </div>
+    <a class="btn btn-outline" href="{% url 'accounts:profile' %}">Complete it</a>
+  </div>
+{% endif %}
+
+<section class="kpi-grid" aria-label="Profile summary">
+  <article class="kpi-card">
+    <span class="kpi-label">Age</span>
+    <span class="kpi-value">{{ profile.age|default:"—" }}</span>
+  </article>
+
+  <article class="kpi-card">
+    <span class="kpi-label">Blood group</span>
+    <span class="kpi-value">{{ profile.blood_group|default:"—" }}</span>
+  </article>
+
+  <article class="kpi-card">
+    <span class="kpi-label">Profile status</span>
+    <span class="kpi-value">{% if profile.is_complete %}Complete{% else %}Incomplete{% endif %}</span>
+    <span class="kpi-note">{% if profile.is_complete %}All required details saved{% else %}Some details are still missing{% endif %}</span>
+  </article>
+
+  <article class="kpi-card">
+    <span class="kpi-label">Emergency contact</span>
+    <span class="kpi-value">{{ profile.emergency_contact_name|default:"—" }}</span>
+  </article>
+</section>
+
+<div class="card">
+  <div class="card-header">
+    <h2>Medical profile</h2>
+    <a href="{% url 'accounts:profile' %}">Edit details</a>
+  </div>
+  <div class="table-wrap">
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">Field</th>
+          <th scope="col">Details</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th scope="row">Age</th>
+          <td>{{ profile.age|default:"—" }}</td>
+        </tr>
+        <tr>
+          <th scope="row">Blood group</th>
+          <td>{{ profile.blood_group|default:"—" }}</td>
+        </tr>
+        <tr>
+          <th scope="row">Allergies</th>
+          <td>{{ profile.allergies|default:"None recorded"|linebreaksbr }}</td>
+        </tr>
+        <tr>
+          <th scope="row">Chronic conditions</th>
+          <td>{{ profile.chronic_conditions|default:"None recorded"|linebreaksbr }}</td>
+        </tr>
+        <tr>
+          <th scope="row">Time zone</th>
+          <td>{{ profile.timezone }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="content-grid">
+  <div class="card">
+    <div class="card-header">
+      <h2>Emergency contact</h2>
+    </div>
+    <div class="card-body">
+      {% if profile.emergency_contact_name or profile.emergency_contact_phone %}
+        <p class="fw-semibold">{{ profile.emergency_contact_name|default:"—" }}</p>
+        <p class="muted">{{ profile.emergency_contact_phone|default:"—" }}</p>
+      {% else %}
+        <p class="muted">No emergency contact saved.</p>
+        <a href="{% url 'accounts:profile' %}" class="btn btn-outline">Add contact</a>
+      {% endif %}
     </div>
   </div>
 
-  {% if not profile.is_complete %}
-    <div class="col-12">
-      <div class="alert alert-warning d-flex flex-wrap justify-content-between align-items-center gap-2">
-        <span>
-          <i class="bi bi-exclamation-triangle me-1"></i>
-          Your profile is incomplete. Doctors you share records with will see
-          missing allergies and emergency contact details.
-        </span>
-        <a class="btn btn-sm btn-warning" href="{% url 'accounts:profile' %}">Complete it</a>
-      </div>
+  <div class="card">
+    <div class="card-header">
+      <h2>Quick actions</h2>
     </div>
-  {% endif %}
-
-  <div class="col-md-6">
-    <div class="card h-100 shadow-sm">
-      <div class="card-header bg-white fw-semibold">
-        <i class="bi bi-person-vcard me-1"></i>Medical profile
-      </div>
-      <div class="card-body">
-        <dl class="row mb-0 small">
-          <dt class="col-5 text-muted">Age</dt>
-          <dd class="col-7">{{ profile.age|default:"—" }}</dd>
-
-          <dt class="col-5 text-muted">Blood group</dt>
-          <dd class="col-7">{{ profile.blood_group|default:"—" }}</dd>
-
-          <dt class="col-5 text-muted">Allergies</dt>
-          <dd class="col-7">{{ profile.allergies|default:"None recorded"|linebreaksbr }}</dd>
-
-          <dt class="col-5 text-muted">Chronic conditions</dt>
-          <dd class="col-7">{{ profile.chronic_conditions|default:"None recorded"|linebreaksbr }}</dd>
-
-          <dt class="col-5 text-muted">Time zone</dt>
-          <dd class="col-7">{{ profile.timezone }}</dd>
-        </dl>
-      </div>
-    </div>
-  </div>
-
-  <div class="col-md-6">
-    <div class="card h-100 shadow-sm">
-      <div class="card-header bg-white fw-semibold">
-        <i class="bi bi-telephone me-1"></i>Emergency contact
-      </div>
-      <div class="card-body">
-        {% if profile.emergency_contact_name or profile.emergency_contact_phone %}
-          <p class="mb-1 fw-semibold">{{ profile.emergency_contact_name|default:"—" }}</p>
-          <p class="mb-0 text-muted">{{ profile.emergency_contact_phone|default:"—" }}</p>
-        {% else %}
-          <p class="text-muted mb-0">No emergency contact saved.</p>
-          <a href="{% url 'accounts:profile' %}" class="btn btn-sm btn-outline-primary mt-2">
-            Add contact
-          </a>
-        {% endif %}
-      </div>
-    </div>
-  </div>
-
-  <div class="col-12">
-    <div class="card shadow-sm">
-      <div class="card-header bg-white fw-semibold">
-        <i class="bi bi-grid me-1"></i>Quick actions
-      </div>
-      <div class="card-body d-flex flex-wrap gap-2">
-        <a href="{% url 'accounts:profile' %}" class="btn btn-primary">
-          <i class="bi bi-clipboard2-pulse me-1"></i>Update medical profile
-        </a>
-        <a href="{% url 'accounts:password_reset' %}" class="btn btn-outline-secondary">
-          <i class="bi bi-key me-1"></i>Reset password
-        </a>
+    <div class="card-body">
+      <div class="inline-actions">
+        <a href="{% url 'accounts:profile' %}" class="btn btn-primary">Update medical profile</a>
+        <a href="{% url 'accounts:password_reset' %}" class="btn btn-outline">Reset password</a>
       </div>
     </div>
   </div>

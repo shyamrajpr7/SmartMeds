@@ -3,31 +3,33 @@
 {% block title %}Register · SmartMeds{% endblock %}
 
 {% block content %}
-<div class="row justify-content-center">
-  <div class="col-12 col-md-8 col-lg-6">
-    <div class="card shadow-sm">
-      <div class="card-body p-4">
-        <h1 class="h4 mb-1">Create your account</h1>
-        <p class="text-muted mb-4">Track prescriptions and keep your medical details in one place.</p>
+<div class="auth-wrap">
+  <div class="auth-card auth-card-wide">
+    <div class="card">
+      <div class="card-body">
+        <h1 class="auth-title">Create your account</h1>
+        <p class="auth-subtitle">Track prescriptions and keep your medical details in one place.</p>
 
         {% if form.non_field_errors %}
-          <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+          <div class="alert alert-danger" role="alert">
+            <div class="alert-content">{{ form.non_field_errors }}</div>
+          </div>
         {% endif %}
 
-        <form method="post" novalidate>
+        <form method="post" novalidate class="stack">
           {% csrf_token %}
           {% for field in form %}
-            <div class="mb-3">
+            <div class="field">
               <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
               {{ field }}
               {% if field.help_text %}<div class="form-text">{{ field.help_text }}</div>{% endif %}
-              {% for error in field.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
+              {% for error in field.errors %}<div class="text-danger">{{ error }}</div>{% endfor %}
             </div>
           {% endfor %}
-          <button type="submit" class="btn btn-primary w-100">Create account</button>
+          <button type="submit" class="btn btn-primary btn-block">Create account</button>
         </form>
 
-        <p class="small mt-3 mb-0">
+        <p class="auth-subtitle auth-footnote">
           Already registered? <a href="{% url 'accounts:login' %}">Log in</a>
         </p>
       </div>

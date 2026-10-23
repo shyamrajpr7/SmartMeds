@@ -3,63 +3,73 @@
 {% block title %}{% if object %}Edit prescription{% else %}Add prescription{% endif %} · SmartMeds{% endblock %}
 
 {% block content %}
-<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
-  <div>
-    <h1 class="h3 mb-1">{% if object %}Edit prescription{% else %}Add prescription{% endif %}</h1>
-    <p class="text-muted mb-0">Save the doctor details, medicines, and the original file.</p>
+<header class="page-header">
+  <div class="page-heading">
+    <h1>{% if object %}Edit prescription{% else %}Add prescription{% endif %}</h1>
+    <p class="page-subtitle">Save the doctor details, medicines, and the original file.</p>
   </div>
-  <a href="{% url 'prescriptions:list' %}" class="btn btn-outline-secondary">Back to vault</a>
-</div>
+  <div class="page-actions">
+    <a href="{% url 'prescriptions:list' %}" class="btn btn-outline">Back to vault</a>
+  </div>
+</header>
 
-<form method="post" enctype="multipart/form-data" novalidate>
+<form method="post" enctype="multipart/form-data" novalidate class="form-stack">
   {% csrf_token %}
 
-  <div class="card shadow-sm mb-3">
-    <div class="card-header bg-white fw-semibold">Prescription details</div>
+  <div class="card">
+    <div class="card-header">
+      <h2>Prescription details</h2>
+    </div>
     <div class="card-body">
       {% if form.non_field_errors %}
-        <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+        <div class="alert alert-danger" role="alert">
+          <div class="alert-content">{{ form.non_field_errors }}</div>
+        </div>
       {% endif %}
-      <div class="row g-3">
+      <div class="form-grid">
         {% for field in form %}
-          <div class="col-md-6">
+          <div class="field">
             <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
             {{ field }}
             {% if field.help_text %}<div class="form-text">{{ field.help_text }}</div>{% endif %}
-            {% for error in field.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
+            {% for error in field.errors %}<div class="text-danger">{{ error }}</div>{% endfor %}
           </div>
         {% endfor %}
       </div>
     </div>
   </div>
 
-  <div class="card shadow-sm mb-3">
-    <div class="card-header bg-white fw-semibold">Medicines</div>
+  <div class="card">
+    <div class="card-header">
+      <h2>Medicines</h2>
+    </div>
     <div class="card-body">
       {{ formset.management_form }}
       {% if formset.non_form_errors %}
-        <div class="alert alert-danger">{{ formset.non_form_errors }}</div>
+        <div class="alert alert-danger" role="alert">
+          <div class="alert-content">{{ formset.non_form_errors }}</div>
+        </div>
       {% endif %}
 
-      <div id="medicine-rows" class="vstack gap-3">
+      <div class="medicine-stack">
         {% for med_form in formset %}
-          <div class="border rounded p-3 medicine-row">
+          <div class="medicine-row">
             {% for hidden in med_form.hidden_fields %}{{ hidden }}{% endfor %}
-            <div class="row g-2">
+            <div class="medicine-grid">
               {% for field in med_form.visible_fields %}
                 {% if field.name != "DELETE" %}
-                  <div class="col-md-4">
-                    <label for="{{ field.id_for_label }}" class="form-label small">{{ field.label }}</label>
+                  <div class="field">
+                    <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
                     {{ field }}
-                    {% for error in field.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
+                    {% for error in field.errors %}<div class="text-danger">{{ error }}</div>{% endfor %}
                   </div>
                 {% endif %}
               {% endfor %}
             </div>
             {% if med_form.instance.pk %}
-              <div class="form-check mt-2">
+              <div class="form-check medicine-check">
                 {{ med_form.DELETE }}
-                <label class="form-check-label small" for="{{ med_form.DELETE.id_for_label }}">Remove this medicine</label>
+                <label class="form-check-label" for="{{ med_form.DELETE.id_for_label }}">Remove this medicine</label>
               </div>
             {% endif %}
           </div>
@@ -68,10 +78,9 @@
     </div>
   </div>
 
-  <div class="d-flex gap-2">
+  <div class="form-actions">
     <button type="submit" class="btn btn-primary">Save prescription</button>
-    <a href="{% url 'prescriptions:list' %}" class="btn btn-outline-secondary">Cancel</a>
+    <a href="{% url 'prescriptions:list' %}" class="btn btn-outline">Cancel</a>
   </div>
 </form>
 {% endblock %}
-

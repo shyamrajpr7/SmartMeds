@@ -3,79 +3,94 @@
 {% block title %}Prescriptions · SmartMeds{% endblock %}
 
 {% block content %}
-<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
-  <div>
-    <h1 class="h3 mb-1">Prescription vault</h1>
-    <p class="text-muted mb-0">Store PDFs/photos, medicines, and timelines.</p>
+<header class="page-header">
+  <div class="page-heading">
+    <h1>Prescription vault</h1>
+    <p class="page-subtitle">Store PDFs/photos, medicines, and timelines.</p>
   </div>
-  <div class="d-flex flex-wrap gap-2">
-    <a href="{% url 'prescriptions:timeline' %}" class="btn btn-outline-secondary">
-      <i class="bi bi-clock-history me-1"></i>Timeline
-    </a>
-    <a href="{% url 'prescriptions:add' %}" class="btn btn-primary">
-      <i class="bi bi-plus-lg me-1"></i>Add prescription
-    </a>
+  <div class="page-actions">
+    <form class="search-form" method="get" role="search">
+      <label class="sr-only" for="prescription-search">Search prescriptions</label>
+      <input class="search-input" id="prescription-search" type="search" name="q"
+             placeholder="Search doctor, clinic, or medicine..." value="{{ query }}">
+      <label class="sr-only" for="doctor-filter">Filter by doctor</label>
+      <select class="select-input" id="doctor-filter" name="doctor">
+        <option value="">All doctors</option>
+        {% for d in doctors %}
+          <option value="{{ d }}" {% if doctor_filter == d %}selected{% endif %}>{{ d }}</option>
+        {% endfor %}
+      </select>
+      <button type="submit" class="btn btn-outline">Filter</button>
+      {% if query or doctor_filter %}
+        <a href="{% url 'prescriptions:list' %}" class="btn btn-ghost">Clear</a>
+      {% endif %}
+    </form>
+    <a href="{% url 'prescriptions:add' %}" class="btn btn-primary">Add prescription</a>
   </div>
-</div>
-
-<form method="get" class="row g-2 mb-3">
-  <div class="col-md-5">
-    <input type="search" name="q" class="form-control" placeholder="Search doctor, clinic, or medicine..." value="{{ query }}">
-  </div>
-  <div class="col-md-4">
-    <select name="doctor" class="form-select">
-      <option value="">All doctors</option>
-      {% for d in doctors %}
-        <option value="{{ d }}" {% if doctor_filter == d %}selected{% endif %}>{{ d }}</option>
-      {% endfor %}
-    </select>
-  </div>
-  <div class="col-md-3 d-flex gap-2">
-    <button class="btn btn-outline-primary">Filter</button>
-    <a href="{% url 'prescriptions:list' %}" class="btn btn-outline-secondary">Clear</a>
-  </div>
-</form>
+</header>
 
 {% if prescriptions %}
-  <div class="row g-3">
-    {% for prescription in prescriptions %}
-      <div class="col-md-6 col-lg-4">
-        <div class="card h-100 shadow-sm">
-          <div class="card-body d-flex flex-column gap-2">
-            <div class="d-flex justify-content-between align-items-start">
-              <div>
-                <h2 class="h6 mb-1">{{ prescription.doctor_name|default:"Prescription" }}</h2>
-                <p class="text-muted small mb-0">{{ prescription.hospital_clinic|default:"" }}</p>
-              </div>
-              {% if prescription.date_issued %}
-                <span class="badge text-bg-light">{{ prescription.date_issued }}</span>
-              {% endif %}
-            </div>
-            {% if prescription.medicines.all %}
-              <ul class="small text-muted mb-0 ps-3">
-                {% for med in prescription.medicines.all|slice:":4" %}
-                  <li>{{ med.name }}{% if med.dosage %} · {{ med.dosage }}{% endif %}</li>
-                {% endfor %}
-                {% if prescription.medicines.count > 4 %}
-                  <li>+ {{ prescription.medicines.count|add:"-4" }} more</li>
+  <div class="card">
+    <div class="card-header">
+      <h2>Prescriptions</h2>
+    </div>
+    <div class="table-wrap">
+      <table class="table table-wide">
+        <thead>
+          <tr>
+            <th scope="col">Doctor</th>
+            <th scope="col">Clinic</th>
+            <th scope="col">Issued</th>
+            <th scope="col">Medicines</th>
+            <th scope="col">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for prescription in prescriptions %}
+            <tr>
+              <td>
+                <a href="{% url 'prescriptions:detail' prescription.pk %}">
+                  {{ prescription.doctor_name|default:"Prescription" }}
+                </a>
+              </td>
+              <td class="muted">{{ prescription.hospital_clinic|default:"—" }}</td>
+              <td>
+                {% if prescription.date_issued %}
+                  <span class="pill pill-neutral">{{ prescription.date_issued }}</span>
+                {% else %}
+                  <span class="muted">—</span>
                 {% endif %}
-              </ul>
-            {% else %}
-              <p class="small text-muted mb-0">No medicines listed.</p>
-            {% endif %}
-            <div class="mt-auto d-flex gap-2">
-              <a href="{% url 'prescriptions:detail' prescription.pk %}" class="btn btn-sm btn-outline-primary">View</a>
-              <a href="{% url 'prescriptions:edit' prescription.pk %}" class="btn btn-sm btn-outline-secondary">Edit</a>
-            </div>
-          </div>
-        </div>
-      </div>
-    {% endfor %}
+              </td>
+              <td>
+                {% if prescription.medicines.all %}
+                  <div class="pill-row">
+                    {% for med in prescription.medicines.all|slice:":4" %}
+                      <span class="pill pill-neutral">{{ med.name }}{% if med.dosage %} · {{ med.dosage }}{% endif %}</span>
+                    {% endfor %}
+                    {% if prescription.medicines.count > 4 %}
+                      <span class="pill pill-neutral">+{{ prescription.medicines.count|add:"-4" }} more</span>
+                    {% endif %}
+                  </div>
+                {% else %}
+                  <span class="muted">No medicines listed</span>
+                {% endif %}
+              </td>
+              <td>
+                <div class="row-actions">
+                  <a href="{% url 'prescriptions:detail' prescription.pk %}">View</a>
+                  <a href="{% url 'prescriptions:edit' prescription.pk %}">Edit</a>
+                </div>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
   </div>
 {% else %}
-  <div class="text-center py-5">
-    <i class="bi bi-file-medical display-6 text-muted"></i>
-    <p class="mt-2 mb-2">No prescriptions yet.</p>
+  <div class="empty-state">
+    <h2>No prescriptions yet.</h2>
+    <p>Add a prescription to keep its doctor details, medicines, and original file together.</p>
     <a href="{% url 'prescriptions:add' %}" class="btn btn-primary">Add your first prescription</a>
   </div>
 {% endif %}
