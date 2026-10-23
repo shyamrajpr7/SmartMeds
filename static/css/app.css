@@ -853,6 +853,47 @@ textarea.form-control {
   gap: 10px;
 }
 
+.sos-card {
+  border-color: var(--danger-border);
+}
+
+.sos-body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.sos-copy {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.sos-call {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 48px;
+  border-color: var(--danger-text);
+  background: var(--danger-text);
+  color: var(--bg);
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.sos-call:hover {
+  border-color: var(--danger-text);
+  background: var(--danger-text);
+  color: var(--bg);
+  filter: brightness(1.08);
+}
+
+.sos-call svg {
+  flex: 0 0 auto;
+  width: 18px;
+  height: 18px;
+}
+
 .attachment-image {
   display: block;
   width: 100%;
