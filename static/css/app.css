@@ -821,7 +821,20 @@ textarea.form-control {
   display: grid;
   grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
   gap: 24px;
-  align-items: start;
+  align-items: stretch;
+}
+
+.dashboard-columns > .card {
+  display: flex;
+  flex-direction: column;
+}
+
+.dashboard-columns > .card .table-wrap {
+  flex: 1;
+}
+
+.dashboard-columns > .card .table {
+  height: 100%;
 }
 
 .dashboard-side {
