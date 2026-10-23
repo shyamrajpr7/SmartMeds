@@ -27,7 +27,7 @@ Set these environment variables before starting the server:
 ```bash
 # Groq (default provider)
 LLM_API_KEY=gsk_your_key
-LLM_MODEL=llama-3.3-70b-versatile
+LLM_MODEL=openai/gpt-oss-120b
 LLM_BASE_URL=https://api.groq.com/openai/v1
 
 # Optional: Tavily web search (falls back to DuckDuckGo + Google News)

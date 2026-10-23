@@ -195,7 +195,7 @@ LLM_API_KEY = config(
         default=config("XAI_API_KEY", default=config("OPENAI_API_KEY", default="")),
     ),
 )
-LLM_MODEL = config("LLM_MODEL", default="llama-3.3-70b-versatile")
+LLM_MODEL = config("LLM_MODEL", default="openai/gpt-oss-120b")
 LLM_BASE_URL = config("LLM_BASE_URL", default="https://api.groq.com/openai/v1")
 
 # Optional web search provider (Tavily). When unset, the assistant falls back
