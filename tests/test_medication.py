@@ -42,7 +42,9 @@ class TestDosage:
 
 
 class TestMedication:
-    def test_is_active_for_current_medication(self, sample_medication: Medication) -> None:
+    def test_is_active_for_current_medication(
+        self, sample_medication: Medication
+    ) -> None:
         assert sample_medication.is_active() is True
 
     def test_is_inactive_for_future_start(self) -> None:
@@ -62,7 +64,9 @@ class TestMedication:
         sample_medication.pills_remaining = 5
         assert sample_medication.needs_refill(threshold=7) is True
 
-    def test_does_not_need_refill_when_sufficient(self, sample_medication: Medication) -> None:
+    def test_does_not_need_refill_when_sufficient(
+        self, sample_medication: Medication
+    ) -> None:
         sample_medication.pills_remaining = 30
         assert sample_medication.needs_refill(threshold=7) is False
 

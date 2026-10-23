@@ -34,7 +34,9 @@ class TestInteractionChecker:
         interactions = checker.check(["warfarin", "aspirin", "metformin", "alcohol"])
         assert len(interactions) >= 2
 
-    def test_single_medication_no_interaction(self, checker: InteractionChecker) -> None:
+    def test_single_medication_no_interaction(
+        self, checker: InteractionChecker
+    ) -> None:
         interactions = checker.check(["warfarin"])
         assert len(interactions) == 0
 

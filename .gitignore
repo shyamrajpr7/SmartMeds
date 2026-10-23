@@ -60,6 +60,9 @@ ipython_config.py
 # pyenv
 .python-version
 
+# ...except the one Vercel reads to pick the Python runtime
+!.python-version
+
 # Celery
 celerybeat-schedule
 celerybeat.pid

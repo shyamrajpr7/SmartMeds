@@ -89,3 +89,27 @@ def truncate(text: str, max_length: int = 50, suffix: str = "...") -> str:
     if len(text) <= max_length:
         return text
     return text[: max_length - len(suffix)] + suffix
+
+
+def redact_uri(uri: str) -> str:
+    """
+    Hide the credentials embedded in a connection string.
+
+    ``mongodb+srv://user:secret@host/db`` becomes
+    ``mongodb+srv://user:***@host/db`` so connection strings can be logged or
+    displayed safely.
+
+    Args:
+        uri: The connection string to redact.
+
+    Returns:
+        The connection string with the password replaced by ``***``.
+    """
+    if "@" not in uri or "://" not in uri:
+        return uri
+    prefix, _, host = uri.rpartition("@")
+    scheme, _, userinfo = prefix.partition("://")
+    user = userinfo.split(":", 1)[0]
+    if not user:
+        return f"{scheme}://***@{host}"
+    return f"{scheme}://{user}:***@{host}"

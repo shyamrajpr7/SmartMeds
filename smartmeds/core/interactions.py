@@ -8,10 +8,9 @@ medical database API (e.g., RxNorm, DrugBank, or OpenFDA).
 
 from __future__ import annotations
 
-import logging
 from dataclasses import dataclass
 from enum import Enum
-from typing import Dict, List, Optional, Set
+from typing import Dict, FrozenSet, List
 
 from smartmeds.utils.logger import get_logger
 
@@ -46,7 +45,7 @@ class DrugInteraction:
 
 
 # Sample interaction database (would be replaced with real API in production)
-_KNOWN_INTERACTIONS: Dict[frozenset, DrugInteraction] = {
+_KNOWN_INTERACTIONS: Dict[FrozenSet[str], DrugInteraction] = {
     frozenset({"warfarin", "aspirin"}): DrugInteraction(
         drug_a="Warfarin",
         drug_b="Aspirin",
@@ -123,10 +122,8 @@ class InteractionChecker:
             True if high-risk interactions are present.
         """
         interactions = self.check(medication_names)
-        return any(
-            i.severity in (InteractionSeverity.HIGH, InteractionSeverity.CONTRAINDICATED)
-            for i in interactions
-        )
+        severe = (InteractionSeverity.HIGH, InteractionSeverity.CONTRAINDICATED)
+        return any(i.severity in severe for i in interactions)
 
     def add_interaction(self, interaction: DrugInteraction) -> None:
         """
@@ -137,4 +134,6 @@ class InteractionChecker:
         """
         key = frozenset({interaction.drug_a.lower(), interaction.drug_b.lower()})
         self._interactions[key] = interaction
-        logger.info("Added interaction: %s + %s", interaction.drug_a, interaction.drug_b)
+        logger.info(
+            "Added interaction: %s + %s", interaction.drug_a, interaction.drug_b
+        )

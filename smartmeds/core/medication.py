@@ -82,7 +82,7 @@ class Medication:
     notes: str = ""
     refill_date: Optional[datetime] = None
     pills_remaining: Optional[int] = None
-    medication_id: Optional[int] = None
+    medication_id: Optional[str] = None
 
     def is_active(self) -> bool:
         """Check if the medication is currently active."""

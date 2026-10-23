@@ -1,12 +1,5 @@
-from setuptools import setup, find_packages
+from setuptools import setup
 
-setup(
-    name="smartmeds",
-    version="0.1.0",
-    packages=find_packages(),
-    entry_points={
-        "console_scripts": [
-            "smartmeds=smartmeds.cli.commands:main",
-        ],
-    },
-)
+# All project metadata lives in pyproject.toml; this shim keeps
+# `pip install -e .` working with older tooling.
+setup()

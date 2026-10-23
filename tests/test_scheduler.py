@@ -34,21 +34,29 @@ def sample_med() -> Medication:
 
 
 class TestMedicationScheduler:
-    def test_add_medication(self, scheduler: MedicationScheduler, sample_med: Medication) -> None:
+    def test_add_medication(
+        self, scheduler: MedicationScheduler, sample_med: Medication
+    ) -> None:
         scheduler.add_medication(sample_med)
         assert len(scheduler) == 1
 
-    def test_remove_medication(self, scheduler: MedicationScheduler, sample_med: Medication) -> None:
+    def test_remove_medication(
+        self, scheduler: MedicationScheduler, sample_med: Medication
+    ) -> None:
         scheduler.add_medication(sample_med)
         result = scheduler.remove_medication("Aspirin")
         assert result is True
         assert len(scheduler) == 0
 
-    def test_remove_nonexistent_medication(self, scheduler: MedicationScheduler) -> None:
+    def test_remove_nonexistent_medication(
+        self, scheduler: MedicationScheduler
+    ) -> None:
         result = scheduler.remove_medication("DoesNotExist")
         assert result is False
 
-    def test_list_medications(self, scheduler: MedicationScheduler, sample_med: Medication) -> None:
+    def test_list_medications(
+        self, scheduler: MedicationScheduler, sample_med: Medication
+    ) -> None:
         scheduler.add_medication(sample_med)
         meds = scheduler.list_medications()
         assert len(meds) == 1
