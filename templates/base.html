@@ -13,7 +13,7 @@
   <script src="{% static 'js/theme.js' %}"></script>
   {% block extra_head %}{% endblock %}
 </head>
-<body>
+<body class="{% block body_class %}{% endblock %}">
   <div class="app-shell">
     <aside class="sidebar">
       <div class="sidebar-inner">
