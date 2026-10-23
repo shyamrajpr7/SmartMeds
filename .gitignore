@@ -121,3 +121,5 @@ Thumbs.db
 data/
 exports/
 config/local_config.yaml
+.vercel
+.env*

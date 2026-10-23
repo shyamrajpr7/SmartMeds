@@ -1,0 +1,16 @@
+body {
+  min-height: 100vh;
+}
+
+.card {
+  border-radius: 0.75rem;
+}
+
+.table > :not(caption) > * > * {
+  padding-top: 0.6rem;
+  padding-bottom: 0.6rem;
+}
+
+.medicine-row {
+  background: var(--bs-light);
+}

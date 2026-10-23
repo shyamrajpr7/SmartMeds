@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block title %}Timeline · SmartMeds{% endblock %}
+
+{% block content %}
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+  <div>
+    <h1 class="h3 mb-1">Prescription timeline</h1>
+    <p class="text-muted mb-0">Everything in your vault, newest first.</p>
+  </div>
+  <div class="d-flex flex-wrap gap-2">
+    <a href="{% url 'prescriptions:list' %}" class="btn btn-outline-secondary">Back to vault</a>
+    <a href="{% url 'prescriptions:add' %}" class="btn btn-primary">Add prescription</a>
+  </div>
+</div>
+
+{% if prescriptions %}
+  <div class="vstack gap-3">
+    {% for prescription in prescriptions %}
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <div class="d-flex flex-wrap justify-content-between align-items-start gap-2">
+            <div>
+              <h2 class="h6 mb-1">
+                <a href="{% url 'prescriptions:detail' prescription.pk %}" class="text-decoration-none">
+                  {{ prescription.doctor_name|default:"Prescription" }}
+                </a>
+              </h2>
+              <p class="text-muted small mb-1">{{ prescription.hospital_clinic|default:"" }}</p>
+              {% if prescription.medicines.all %}
+                <p class="small mb-0">
+                  {% for med in prescription.medicines.all %}
+                    <span class="badge text-bg-light">{{ med.name }}</span>
+                  {% endfor %}
+                </p>
+              {% endif %}
+            </div>
+            <div class="text-end small text-muted">
+              {% if prescription.date_issued %}
+                <div>{{ prescription.date_issued }}</div>
+              {% endif %}
+              <div>Added {{ prescription.created_at|date:"d M Y" }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+{% else %}
+  <div class="text-center py-5">
+    <i class="bi bi-clock-history display-6 text-muted"></i>
+    <p class="mt-2 mb-2">Nothing in your timeline yet.</p>
+    <a href="{% url 'prescriptions:add' %}" class="btn btn-primary">Add a prescription</a>
+  </div>
+{% endif %}
+{% endblock %}

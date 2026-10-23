@@ -31,10 +31,13 @@ def configure_logging(level: int = logging.INFO, log_to_file: bool = True) -> No
     ]
 
     if log_to_file:
-        LOG_DIR.mkdir(parents=True, exist_ok=True)
-        file_handler = logging.FileHandler(LOG_FILE, encoding="utf-8")
-        file_handler.setLevel(level)
-        handlers.append(file_handler)
+        try:
+            LOG_DIR.mkdir(parents=True, exist_ok=True)
+            file_handler = logging.FileHandler(LOG_FILE, encoding="utf-8")
+            file_handler.setLevel(level)
+            handlers.append(file_handler)
+        except OSError:
+            pass
 
     logging.basicConfig(
         level=level,
