@@ -64,19 +64,6 @@
         </nav>
 
         <div class="sidebar-footer">
-          {% if user.is_authenticated %}
-            <div class="user-meta">
-              <span class="user-label">Signed in as</span>
-              <span class="user-name">{{ user.get_username }}</span>
-            </div>
-            <form method="post" action="{% url 'accounts:logout' %}">
-              {% csrf_token %}
-              <button type="submit" class="btn btn-outline btn-block">Log out</button>
-            </form>
-            <button type="button" class="btn btn-outline btn-block" data-enable-reminders hidden>
-              Enable medicine alerts
-            </button>
-          {% endif %}
           <div class="theme-picker">
             <label for="theme-picker">Theme</label>
             <select id="theme-picker" data-theme-picker>
@@ -85,6 +72,15 @@
               <option value="midnight-crimson">Midnight Crimson</option>
             </select>
           </div>
+          {% if user.is_authenticated %}
+            <form method="post" action="{% url 'accounts:logout' %}">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-outline btn-block">Log out</button>
+            </form>
+            <button type="button" class="btn btn-outline btn-block" data-enable-reminders hidden>
+              Enable medicine alerts
+            </button>
+          {% endif %}
         </div>
       </div>
     </aside>

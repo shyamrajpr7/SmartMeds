@@ -206,26 +206,6 @@ textarea {
   border-top: 1px solid var(--border);
 }
 
-.user-meta {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  padding: 0 8px;
-  min-width: 0;
-}
-
-.user-label {
-  color: var(--muted);
-  font-size: 12px;
-}
-
-.user-name {
-  overflow-wrap: anywhere;
-  color: var(--text);
-  font-size: 13px;
-  font-weight: 600;
-}
-
 .theme-toggle {
   display: inline-flex;
   align-items: center;
@@ -1145,10 +1125,6 @@ textarea.form-control {
     justify-content: space-between;
     margin-top: 0;
     padding-top: 12px;
-  }
-
-  .user-meta {
-    padding: 0;
   }
 
   .sidebar-footer form {
