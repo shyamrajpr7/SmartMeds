@@ -9,7 +9,7 @@ description = "An intelligent medication management system"
 readme = "README.md"
 license = { file = "LICENSE" }
 authors = [{ name = "shyamrajpr7" }]
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 keywords = ["medication", "health", "management", "reminder"]
 classifiers = [
     "Development Status :: 3 - Alpha",
