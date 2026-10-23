@@ -1,24 +1,16 @@
 {% load static %}
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="teal-orange">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{% block title %}SmartMeds{% endblock %}</title>
-  <script>
-    (function () {
-      try {
-        var theme = window.localStorage.getItem("smartmeds-theme");
-        if (theme === "light" || theme === "dark") {
-          document.documentElement.setAttribute("data-theme", theme);
-        }
-      } catch (error) {}
-    })();
-  </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="{% static 'css/app.css' %}">
+  <link rel="stylesheet" href="{% static 'css/theme.css' %}">
+  <script src="{% static 'js/theme.js' %}"></script>
   {% block extra_head %}{% endblock %}
 </head>
 <body>
@@ -81,10 +73,18 @@
               {% csrf_token %}
               <button type="submit" class="btn btn-outline btn-block">Log out</button>
             </form>
+            <button type="button" class="btn btn-outline btn-block" data-enable-reminders hidden>
+              Enable medicine alerts
+            </button>
           {% endif %}
-          <button type="button" class="theme-toggle" data-theme-toggle aria-label="Switch color theme">
-            <span data-theme-label>Dark mode</span>
-          </button>
+          <div class="theme-picker">
+            <label for="theme-picker">Theme</label>
+            <select id="theme-picker" data-theme-picker>
+              <option value="teal-orange">Teal &amp; Orange</option>
+              <option value="noir-gold">Noir &amp; Gold</option>
+              <option value="midnight-crimson">Midnight Crimson</option>
+            </select>
+          </div>
         </div>
       </div>
     </aside>
@@ -102,52 +102,21 @@
     </main>
   </div>
 
+  {% if user.is_authenticated %}
+    <div id="medicine-reminder" class="reminder-banner" role="alert" aria-live="assertive" aria-atomic="true" hidden>
+      <div>
+        <p class="reminder-kicker">Medicine reminder</p>
+        <p class="reminder-text" data-reminder-text></p>
+      </div>
+      <div class="reminder-actions">
+        <button type="button" class="btn btn-primary" data-reminder-stop>Stop alarm</button>
+        <button type="button" class="btn btn-outline" data-reminder-snooze>Snooze 5 min</button>
+      </div>
+    </div>
+  {% endif %}
+
   <script>
     (function () {
-      var root = document.documentElement;
-      var toggle = document.querySelector("[data-theme-toggle]");
-      var label = document.querySelector("[data-theme-label]");
-      var media = window.matchMedia("(prefers-color-scheme: dark)");
-
-      function currentTheme() {
-        var explicit = root.getAttribute("data-theme");
-        if (explicit === "light" || explicit === "dark") {
-          return explicit;
-        }
-        return media.matches ? "dark" : "light";
-      }
-
-      function updateLabel() {
-        if (!label) {
-          return;
-        }
-        label.textContent = currentTheme() === "dark" ? "Light mode" : "Dark mode";
-        if (toggle) {
-          toggle.setAttribute(
-            "aria-label",
-            "Switch to " + (currentTheme() === "dark" ? "light" : "dark") + " mode"
-          );
-        }
-      }
-
-      if (toggle) {
-        toggle.addEventListener("click", function () {
-          var next = currentTheme() === "dark" ? "light" : "dark";
-          root.setAttribute("data-theme", next);
-          try {
-            window.localStorage.setItem("smartmeds-theme", next);
-          } catch (error) {}
-          updateLabel();
-        });
-      }
-
-      if (media.addEventListener) {
-        media.addEventListener("change", updateLabel);
-      } else if (media.addListener) {
-        media.addListener(updateLabel);
-      }
-      updateLabel();
-
       document.querySelectorAll("[data-dismiss='alert']").forEach(function (button) {
         button.addEventListener("click", function () {
           var alert = button.closest(".alert");
@@ -158,6 +127,9 @@
       });
     })();
   </script>
+  {% if user.is_authenticated %}
+    <script src="{% static 'js/reminders.js' %}" data-reminders-url="{% url 'prescriptions:reminders' %}"></script>
+  {% endif %}
   {% block extra_js %}{% endblock %}
 </body>
 </html>

@@ -1,10 +1,13 @@
 """Views for prescriptions vault."""
 
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q
+from django.http import JsonResponse
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
+from django.views import View
 from django.views.generic import (
     CreateView,
     DeleteView,
@@ -12,6 +15,8 @@ from django.views.generic import (
     ListView,
     UpdateView,
 )
+
+from accounts.models import Profile
 
 from .forms import MedicineFormSet, PrescriptionForm
 from .models import Prescription
@@ -63,6 +68,47 @@ class PrescriptionTimelineView(LoginRequiredMixin, ListView):
         return Prescription.objects.filter(user=self.request.user).prefetch_related(
             "medicines"
         )
+
+
+class MedicineReminderListView(LoginRequiredMixin, View):
+    """Return the signed-in user's daily medicine times as JSON."""
+
+    def get(self, request):
+        try:
+            timezone = request.user.profile.timezone
+        except Profile.DoesNotExist:
+            timezone = settings.TIME_ZONE
+
+        medicines = []
+        prescriptions = Prescription.objects.filter(user=request.user).prefetch_related(
+            "medicines"
+        )
+        for prescription in prescriptions:
+            for medicine in prescription.medicines.all():
+                if not medicine.time:
+                    continue
+                medicines.append(
+                    {
+                        "id": str(medicine.pk),
+                        "name": medicine.name,
+                        "dosage": medicine.dosage,
+                        "time": medicine.time.strftime("%H:%M"),
+                        "prescription_id": str(prescription.pk),
+                        "doctor": prescription.doctor_name,
+                    }
+                )
+
+        medicines.sort(
+            key=lambda medicine: (medicine["time"], medicine["name"].lower())
+        )
+        response = JsonResponse(
+            {
+                "timezone": timezone or settings.TIME_ZONE,
+                "medicines": medicines,
+            }
+        )
+        response["Cache-Control"] = "no-store"
+        return response
 
 
 class PrescriptionDetailView(LoginRequiredMixin, DetailView):
