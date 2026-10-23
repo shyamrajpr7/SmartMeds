@@ -32,22 +32,25 @@ class PrescriptionListView(LoginRequiredMixin, ListView):
         qs = Prescription.objects.filter(user=self.request.user).prefetch_related(
             "medicines"
         )
-        q = self.request.GET.get("q")
+        q = self.request.GET.get("q", "").strip()
         if q:
             qs = qs.filter(
                 Q(doctor_name__icontains=q)
                 | Q(hospital_clinic__icontains=q)
                 | Q(medicines__name__icontains=q)
             ).distinct()
-        doctor = self.request.GET.get("doctor")
+        doctor = self.request.GET.get("doctor", "").strip()
         if doctor:
             qs = qs.filter(doctor_name__iexact=doctor)
         return qs
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["query"] = self.request.GET.get("q", "")
-        context["doctor_filter"] = self.request.GET.get("doctor", "")
+        context["query"] = self.request.GET.get("q", "").strip()
+        context["doctor_filter"] = self.request.GET.get("doctor", "").strip()
+        context["has_prescriptions"] = Prescription.objects.filter(
+            user=self.request.user
+        ).exists()
         doctors = (
             Prescription.objects.filter(user=self.request.user)
             .exclude(doctor_name="")

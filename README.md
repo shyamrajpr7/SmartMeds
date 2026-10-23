@@ -15,6 +15,28 @@ SmartMeds is a smart medication management application that helps users track pr
 - 💾 **Secure Storage** — Encrypted local storage for sensitive health data
 - 🗄️ **Pluggable Storage** — SQLite out of the box, MongoDB when you need it
 - 📤 **Export Reports** — Export medication logs and reports
+- 🤖 **AI Assistant** — Ask about your records, navigate the app, or search the web
+
+## 🤖 AI Assistant
+
+The in-app assistant uses an OpenAI-compatible chat API (Groq by default) and
+can search the web, cite sources, and open SmartMeds screens on request.
+
+Set these environment variables before starting the server:
+
+```bash
+# Groq (default provider)
+LLM_API_KEY=gsk_your_key
+LLM_MODEL=llama-3.3-70b-versatile
+LLM_BASE_URL=https://api.groq.com/openai/v1
+
+# Optional: Tavily web search (falls back to DuckDuckGo + Google News)
+WEB_SEARCH_API_KEY=tvly_your_key
+```
+
+For xAI or another OpenAI-compatible provider, override `LLM_BASE_URL` and
+`LLM_MODEL`. `GROQ_API_KEY`, `XAI_API_KEY`, and `OPENAI_API_KEY` are also
+accepted as fallbacks for `LLM_API_KEY`.
 
 ## 🚀 Getting Started
 

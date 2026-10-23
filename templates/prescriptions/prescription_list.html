@@ -87,6 +87,22 @@
       </table>
     </div>
   </div>
+{% elif has_prescriptions %}
+  <div class="empty-state">
+    <h2>No matching prescriptions.</h2>
+    <p>
+      {% if query %}
+        Nothing matches "{{ query }}"{% if doctor_filter %} from {{ doctor_filter }}{% endif %}.
+      {% else %}
+        No records match the selected doctor.
+      {% endif %}
+      Your other prescriptions are still safely stored in the vault.
+    </p>
+    <div class="inline-actions">
+      <a href="{% url 'prescriptions:list' %}" class="btn btn-outline">Clear filters</a>
+      <a href="{% url 'prescriptions:add' %}" class="btn btn-primary">Add prescription</a>
+    </div>
+  </div>
 {% else %}
   <div class="empty-state">
     <h2>No prescriptions yet.</h2>

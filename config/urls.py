@@ -12,6 +12,7 @@ urlpatterns = [
     path("", DashboardView.as_view(), name="dashboard"),
     path("accounts/", include("accounts.urls")),
     path("prescriptions/", include("prescriptions.urls")),
+    path("assistant/", include("assistant.urls")),
 ]
 
 if settings.DEBUG:

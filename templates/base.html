@@ -10,6 +10,9 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="{% static 'css/app.css' %}">
   <link rel="stylesheet" href="{% static 'css/theme.css' %}">
+  {% if user.is_authenticated %}
+    <link rel="stylesheet" href="{% static 'css/assistant.css' %}">
+  {% endif %}
   <script src="{% static 'js/theme.js' %}"></script>
   {% block extra_head %}{% endblock %}
 </head>
@@ -109,6 +112,7 @@
         <button type="button" class="btn btn-outline" data-reminder-snooze>Snooze 5 min</button>
       </div>
     </div>
+    {% include "partials/assistant.html" %}
   {% endif %}
 
   <script>
@@ -125,6 +129,7 @@
   </script>
   {% if user.is_authenticated %}
     <script src="{% static 'js/reminders.js' %}" data-reminders-url="{% url 'prescriptions:reminders' %}"></script>
+    <script src="{% static 'js/assistant.js' %}"></script>
   {% endif %}
   {% block extra_js %}{% endblock %}
 </body>

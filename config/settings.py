@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     # Local apps
     "accounts",
     "prescriptions",
+    "assistant",
 ]
 
 MIDDLEWARE = [
@@ -187,9 +188,25 @@ DEFAULT_FROM_EMAIL = config(
 # ---------------------------------------------------------------------------
 CRON_SECRET = config("CRON_SECRET", default="")
 
-LLM_API_KEY = config("LLM_API_KEY", default="")
-LLM_MODEL = config("LLM_MODEL", default="gpt-4o-mini")
-LLM_BASE_URL = config("LLM_BASE_URL", default="https://api.openai.com/v1")
+LLM_API_KEY = config(
+    "LLM_API_KEY",
+    default=config(
+        "GROQ_API_KEY",
+        default=config("XAI_API_KEY", default=config("OPENAI_API_KEY", default="")),
+    ),
+)
+LLM_MODEL = config("LLM_MODEL", default="llama-3.3-70b-versatile")
+LLM_BASE_URL = config("LLM_BASE_URL", default="https://api.groq.com/openai/v1")
+
+# Optional web search provider (Tavily). When unset, the assistant falls back
+# to public DuckDuckGo and Google News feeds.
+WEB_SEARCH_API_KEY = config(
+    "WEB_SEARCH_API_KEY", default=config("TAVILY_API_KEY", default="")
+)
+WEB_SEARCH_BASE_URL = config(
+    "WEB_SEARCH_BASE_URL", default="https://api.tavily.com"
+)
+TAVILY_API_KEY = WEB_SEARCH_API_KEY
 
 WEBPUSH_SETTINGS = {
     "VAPID_PUBLIC_KEY": config("VAPID_PUBLIC_KEY", default=""),
