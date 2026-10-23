@@ -5,6 +5,7 @@
 {% block content %}
 <header class="page-header">
   <div class="page-heading">
+    <p class="page-eyebrow">Overview</p>
     <h1>Hello, {{ profile.full_name|default:user.get_username }}</h1>
     <p class="page-subtitle">Your medical dashboard</p>
   </div>
@@ -15,7 +16,8 @@
              placeholder="Search prescriptions..." value="">
       <button type="submit" class="btn btn-outline">Search</button>
     </form>
-    <a href="{% url 'accounts:profile' %}" class="btn btn-primary">Edit profile</a>
+    <a href="{% url 'prescriptions:add' %}" class="btn btn-primary">Add prescription</a>
+    <a href="{% url 'accounts:profile' %}" class="btn btn-outline">Edit profile</a>
   </div>
 </header>
 
@@ -29,92 +31,198 @@
   </div>
 {% endif %}
 
-<section class="kpi-grid" aria-label="Profile summary">
+<section class="kpi-grid" aria-label="Dashboard summary">
   <article class="kpi-card">
-    <span class="kpi-label">Age</span>
+    <div class="kpi-head">
+      <span class="kpi-label">Prescriptions</span>
+      <span class="kpi-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+          <path d="M14 2v6h6M8 13h8M8 17h6"/>
+        </svg>
+      </span>
+    </div>
+    <span class="kpi-value">{{ prescription_count }}</span>
+    <span class="kpi-note">In your vault</span>
+  </article>
+
+  <article class="kpi-card">
+    <div class="kpi-head">
+      <span class="kpi-label">Medicines</span>
+      <span class="kpi-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="3" width="18" height="18" rx="5"/>
+          <path d="M12 8v8M8 12h8"/>
+        </svg>
+      </span>
+    </div>
+    <span class="kpi-value">{{ medicine_count }}</span>
+    <span class="kpi-note">Across all prescriptions</span>
+  </article>
+
+  <article class="kpi-card">
+    <div class="kpi-head">
+      <span class="kpi-label">Age</span>
+      <span class="kpi-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="8" r="3.5"/>
+          <path d="M5 20c0-3.5 3-6 7-6s7 2.5 7 6"/>
+        </svg>
+      </span>
+    </div>
     <span class="kpi-value">{{ profile.age|default:"—" }}</span>
+    <span class="kpi-note">Years on record</span>
   </article>
 
   <article class="kpi-card">
-    <span class="kpi-label">Blood group</span>
+    <div class="kpi-head">
+      <span class="kpi-label">Blood group</span>
+      <span class="kpi-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 3s6 6.2 6 10.5a6 6 0 0 1-12 0C6 9.2 12 3 12 3Z"/>
+        </svg>
+      </span>
+    </div>
     <span class="kpi-value">{{ profile.blood_group|default:"—" }}</span>
-  </article>
-
-  <article class="kpi-card">
-    <span class="kpi-label">Profile status</span>
-    <span class="kpi-value">{% if profile.is_complete %}Complete{% else %}Incomplete{% endif %}</span>
-    <span class="kpi-note">{% if profile.is_complete %}All required details saved{% else %}Some details are still missing{% endif %}</span>
-  </article>
-
-  <article class="kpi-card">
-    <span class="kpi-label">Emergency contact</span>
-    <span class="kpi-value">{{ profile.emergency_contact_name|default:"—" }}</span>
+    <span class="kpi-note">On record</span>
   </article>
 </section>
 
 <div class="card">
   <div class="card-header">
-    <h2>Medical profile</h2>
-    <a href="{% url 'accounts:profile' %}">Edit details</a>
+    <h2>Recent prescriptions</h2>
+    {% if recent_prescriptions %}
+      <a href="{% url 'prescriptions:list' %}">View all</a>
+    {% endif %}
   </div>
-  <div class="table-wrap">
-    <table class="table">
-      <thead>
-        <tr>
-          <th scope="col">Field</th>
-          <th scope="col">Details</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <th scope="row">Age</th>
-          <td>{{ profile.age|default:"—" }}</td>
-        </tr>
-        <tr>
-          <th scope="row">Blood group</th>
-          <td>{{ profile.blood_group|default:"—" }}</td>
-        </tr>
-        <tr>
-          <th scope="row">Allergies</th>
-          <td>{{ profile.allergies|default:"None recorded"|linebreaksbr }}</td>
-        </tr>
-        <tr>
-          <th scope="row">Chronic conditions</th>
-          <td>{{ profile.chronic_conditions|default:"None recorded"|linebreaksbr }}</td>
-        </tr>
-        <tr>
-          <th scope="row">Time zone</th>
-          <td>{{ profile.timezone }}</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+  {% if recent_prescriptions %}
+    <div class="table-wrap">
+      <table class="table table-wide">
+        <thead>
+          <tr>
+            <th scope="col">Doctor</th>
+            <th scope="col">Clinic</th>
+            <th scope="col">Issued</th>
+            <th scope="col">Medicines</th>
+            <th scope="col">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for prescription in recent_prescriptions %}
+            <tr>
+              <td>
+                <a href="{% url 'prescriptions:detail' prescription.pk %}">
+                  {{ prescription.doctor_name|default:"Prescription" }}
+                </a>
+              </td>
+              <td class="muted">{{ prescription.hospital_clinic|default:"—" }}</td>
+              <td>
+                {% if prescription.date_issued %}
+                  <span class="pill pill-neutral">{{ prescription.date_issued }}</span>
+                {% else %}
+                  <span class="muted">—</span>
+                {% endif %}
+              </td>
+              <td>
+                {% if prescription.medicines.all %}
+                  <div class="pill-row">
+                    {% for med in prescription.medicines.all|slice:":4" %}
+                      <span class="pill pill-neutral">{{ med.name }}{% if med.dosage %} · {{ med.dosage }}{% endif %}{% if med.time %} · {{ med.time|time:"H:i" }}{% endif %}</span>
+                    {% endfor %}
+                    {% if prescription.medicines.count > 4 %}
+                      <span class="pill pill-neutral">+{{ prescription.medicines.count|add:"-4" }} more</span>
+                    {% endif %}
+                  </div>
+                {% else %}
+                  <span class="muted">No medicines listed</span>
+                {% endif %}
+              </td>
+              <td>
+                <div class="row-actions">
+                  <a href="{% url 'prescriptions:detail' prescription.pk %}">View</a>
+                  <a href="{% url 'prescriptions:edit' prescription.pk %}">Edit</a>
+                </div>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <div class="card-body">
+      <p class="muted">No prescriptions yet. Add one to start tracking medicines and reminders.</p>
+      <a href="{% url 'prescriptions:add' %}" class="btn btn-outline">Add prescription</a>
+    </div>
+  {% endif %}
 </div>
 
-<div class="content-grid">
+<div class="dashboard-columns">
   <div class="card">
     <div class="card-header">
-      <h2>Emergency contact</h2>
+      <h2>Medical profile</h2>
+      <span class="pill {% if profile.is_complete %}pill-success{% else %}pill-warn{% endif %}">
+        {% if profile.is_complete %}Complete{% else %}Incomplete{% endif %}
+      </span>
     </div>
-    <div class="card-body">
-      {% if profile.emergency_contact_name or profile.emergency_contact_phone %}
-        <p class="fw-semibold">{{ profile.emergency_contact_name|default:"—" }}</p>
-        <p class="muted">{{ profile.emergency_contact_phone|default:"—" }}</p>
-      {% else %}
-        <p class="muted">No emergency contact saved.</p>
-        <a href="{% url 'accounts:profile' %}" class="btn btn-outline">Add contact</a>
-      {% endif %}
+    <div class="table-wrap">
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">Field</th>
+            <th scope="col">Details</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">Age</th>
+            <td>{{ profile.age|default:"—" }}</td>
+          </tr>
+          <tr>
+            <th scope="row">Blood group</th>
+            <td>{{ profile.blood_group|default:"—" }}</td>
+          </tr>
+          <tr>
+            <th scope="row">Allergies</th>
+            <td>{{ profile.allergies|default:"None recorded"|linebreaksbr }}</td>
+          </tr>
+          <tr>
+            <th scope="row">Chronic conditions</th>
+            <td>{{ profile.chronic_conditions|default:"None recorded"|linebreaksbr }}</td>
+          </tr>
+          <tr>
+            <th scope="row">Time zone</th>
+            <td>{{ profile.timezone }}</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </div>
 
-  <div class="card">
-    <div class="card-header">
-      <h2>Quick actions</h2>
+  <div class="dashboard-side">
+    <div class="card">
+      <div class="card-header">
+        <h2>Emergency contact</h2>
+      </div>
+      <div class="card-body">
+        {% if profile.emergency_contact_name or profile.emergency_contact_phone %}
+          <p class="fw-semibold">{{ profile.emergency_contact_name|default:"—" }}</p>
+          <p class="muted">{{ profile.emergency_contact_phone|default:"—" }}</p>
+        {% else %}
+          <p class="muted">No emergency contact saved.</p>
+          <a href="{% url 'accounts:profile' %}" class="btn btn-outline">Add contact</a>
+        {% endif %}
+      </div>
     </div>
-    <div class="card-body">
-      <div class="inline-actions">
-        <a href="{% url 'accounts:profile' %}" class="btn btn-primary">Update medical profile</a>
-        <a href="{% url 'accounts:password_reset' %}" class="btn btn-outline">Reset password</a>
+
+    <div class="card">
+      <div class="card-header">
+        <h2>Quick actions</h2>
+      </div>
+      <div class="card-body">
+        <div class="inline-actions">
+          <a href="{% url 'accounts:profile' %}" class="btn btn-outline">Update medical profile</a>
+          <a href="{% url 'accounts:password_reset' %}" class="btn btn-ghost">Reset password</a>
+        </div>
       </div>
     </div>
   </div>

@@ -7,6 +7,8 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, TemplateView, UpdateView
 
+from prescriptions.models import Medicine, Prescription
+
 from .forms import ProfileForm, SignupForm
 from .models import Profile
 
@@ -19,7 +21,15 @@ class DashboardView(LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         profile, _ = Profile.objects.get_or_create(user=self.request.user)
+        prescriptions = Prescription.objects.filter(user=self.request.user)
         context["profile"] = profile
+        context["prescription_count"] = prescriptions.count()
+        context["medicine_count"] = Medicine.objects.filter(
+            prescription__user=self.request.user
+        ).count()
+        context["recent_prescriptions"] = list(
+            prescriptions.prefetch_related("medicines")[:5]
+        )
         return context
 
 

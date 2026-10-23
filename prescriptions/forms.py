@@ -29,20 +29,46 @@ class BootstrapFormMixin:
 class PrescriptionForm(BootstrapFormMixin, forms.ModelForm):
     class Meta:
         model = Prescription
-        fields = ("doctor_name", "hospital_clinic", "date_issued", "notes", "file")
+        fields = (
+            "doctor_name",
+            "hospital_clinic",
+            "date_issued",
+            "notes",
+            "file",
+            "image",
+        )
+        labels = {
+            "file": "Prescription file (PDF or image)",
+            "image": "Additional image (optional)",
+        }
         widgets = {
             "date_issued": forms.DateInput(attrs={"type": "date"}),
             "notes": forms.Textarea(attrs={"rows": 3}),
+            "file": forms.FileInput(
+                attrs={"accept": ".jpg,.jpeg,.png,.webp,.pdf"}
+            ),
+            "image": forms.FileInput(
+                attrs={"accept": ".jpg,.jpeg,.png,.webp"}
+            ),
         }
 
 
 class MedicineForm(BootstrapFormMixin, forms.ModelForm):
     class Meta:
         model = Medicine
-        fields = ("name", "dosage", "frequency", "duration", "instructions", "order")
+        fields = (
+            "name",
+            "dosage",
+            "frequency",
+            "duration",
+            "time",
+            "instructions",
+        )
         widgets = {
+            "time": forms.TimeInput(
+                format="%H:%M", attrs={"type": "time"}
+            ),
             "instructions": forms.Textarea(attrs={"rows": 2}),
-            "order": forms.HiddenInput(),
         }
 
 

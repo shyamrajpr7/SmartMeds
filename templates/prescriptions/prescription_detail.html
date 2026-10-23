@@ -27,13 +27,28 @@
       {% if prescription.file %}
         {% if prescription.file_is_image %}
           <img src="{{ prescription.file.url }}" alt="Prescription image" class="attachment-image">
+        {% elif prescription.file_is_pdf %}
+          <iframe class="attachment-frame" src="{{ prescription.file.url }}"
+                  title="Prescription PDF preview" loading="lazy"></iframe>
+          <div class="attachment-actions">
+            <a href="{{ prescription.file.url }}" target="_blank" rel="noopener" class="btn btn-outline">
+              Open PDF in new tab
+            </a>
+          </div>
         {% else %}
           <a href="{{ prescription.file.url }}" target="_blank" rel="noopener" class="btn btn-outline">
-            Open PDF
+            Open file
           </a>
         {% endif %}
       {% else %}
         <p class="muted">No file attached.</p>
+      {% endif %}
+
+      {% if prescription.image %}
+        <div class="attachment-secondary">
+          <p class="attachment-label">Additional image</p>
+          <img src="{{ prescription.image.url }}" alt="Additional prescription image" class="attachment-image">
+        </div>
       {% endif %}
     </div>
   </div>
@@ -51,6 +66,7 @@
               <th scope="col">Dosage</th>
               <th scope="col">Frequency</th>
               <th scope="col">Duration</th>
+              <th scope="col">Time</th>
             </tr>
           </thead>
           <tbody>
@@ -60,10 +76,11 @@
                 <td>{{ med.dosage|default:"—" }}</td>
                 <td>{{ med.frequency|default:"—" }}</td>
                 <td>{{ med.duration|default:"—" }}</td>
+                <td>{% if med.time %}{{ med.time|time:"H:i" }}{% else %}—{% endif %}</td>
               </tr>
               {% if med.instructions %}
                 <tr>
-                  <td colspan="4" class="muted small">{{ med.instructions }}</td>
+                  <td colspan="5" class="muted small">{{ med.instructions }}</td>
                 </tr>
               {% endif %}
             {% endfor %}

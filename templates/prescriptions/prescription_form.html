@@ -28,7 +28,7 @@
       {% endif %}
       <div class="form-grid">
         {% for field in form %}
-          <div class="field">
+          <div class="field{% if field.name == 'notes' or field.name == 'file' or field.name == 'image' %} field-full{% endif %}">
             <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
             {{ field }}
             {% if field.help_text %}<div class="form-text">{{ field.help_text }}</div>{% endif %}
@@ -51,29 +51,14 @@
         </div>
       {% endif %}
 
-      <div class="medicine-stack">
+      <div id="medicine-rows" class="medicine-stack">
         {% for med_form in formset %}
-          <div class="medicine-row">
-            {% for hidden in med_form.hidden_fields %}{{ hidden }}{% endfor %}
-            <div class="medicine-grid">
-              {% for field in med_form.visible_fields %}
-                {% if field.name != "DELETE" %}
-                  <div class="field">
-                    <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
-                    {{ field }}
-                    {% for error in field.errors %}<div class="text-danger">{{ error }}</div>{% endfor %}
-                  </div>
-                {% endif %}
-              {% endfor %}
-            </div>
-            {% if med_form.instance.pk %}
-              <div class="form-check medicine-check">
-                {{ med_form.DELETE }}
-                <label class="form-check-label" for="{{ med_form.DELETE.id_for_label }}">Remove this medicine</label>
-              </div>
-            {% endif %}
-          </div>
+          {% include "prescriptions/_medicine_form.html" with med_form=med_form %}
         {% endfor %}
+      </div>
+
+      <div class="medicine-actions">
+        <button type="button" class="btn btn-outline" data-add-medicine>Add another medicine</button>
       </div>
     </div>
   </div>
@@ -83,4 +68,76 @@
     <a href="{% url 'prescriptions:list' %}" class="btn btn-outline">Cancel</a>
   </div>
 </form>
+
+<template id="medicine-empty-template">
+  {% include "prescriptions/_medicine_form.html" with med_form=formset.empty_form %}
+</template>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  (function () {
+    var container = document.getElementById("medicine-rows");
+    var addButton = document.querySelector("[data-add-medicine]");
+    var template = document.getElementById("medicine-empty-template");
+    var totalForms = document.querySelector('input[name$="-TOTAL_FORMS"]');
+
+    if (!container || !addButton || !template || !totalForms) {
+      return;
+    }
+
+    function renumber() {
+      var rows = container.querySelectorAll("[data-medicine-row]:not([hidden])");
+      rows.forEach(function (row, index) {
+        var title = row.querySelector(".medicine-row-title");
+        if (title) {
+          title.textContent = "Medicine " + (index + 1);
+        }
+      });
+    }
+
+    addButton.addEventListener("click", function () {
+      var index = parseInt(totalForms.value, 10) || 0;
+      var html = template.innerHTML.replace(/__prefix__/g, index);
+      var wrapper = document.createElement("div");
+      wrapper.innerHTML = html.trim();
+      var row = wrapper.firstElementChild;
+
+      if (!row) {
+        return;
+      }
+
+      container.appendChild(row);
+      totalForms.value = index + 1;
+      renumber();
+
+      var firstInput = row.querySelector("input:not([type='hidden']), select, textarea");
+      if (firstInput) {
+        firstInput.focus();
+      }
+    });
+
+    container.addEventListener("click", function (event) {
+      var removeButton = event.target.closest("[data-remove-medicine]");
+      if (!removeButton) {
+        return;
+      }
+
+      var row = removeButton.closest("[data-medicine-row]");
+      if (!row) {
+        return;
+      }
+
+      var deleteCheckbox = row.querySelector('input[type="checkbox"][name$="-DELETE"]');
+      if (deleteCheckbox) {
+        deleteCheckbox.checked = true;
+      }
+
+      row.hidden = true;
+      renumber();
+    });
+
+    renumber();
+  })();
+</script>
 {% endblock %}

@@ -29,7 +29,7 @@
             {% if prescription.medicines.all %}
               <div class="pill-row">
                 {% for med in prescription.medicines.all %}
-                  <span class="pill pill-neutral">{{ med.name }}</span>
+                  <span class="pill pill-neutral">{{ med.name }}{% if med.time %} · {{ med.time|time:"H:i" }}{% endif %}</span>
                 {% endfor %}
               </div>
             {% endif %}

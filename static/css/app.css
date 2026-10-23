@@ -250,13 +250,17 @@ textarea {
   display: grid;
   flex: 0 0 auto;
   place-items: center;
-  width: 28px;
-  height: 28px;
+  width: 32px;
+  height: 32px;
   border-radius: var(--radius-control);
   background: var(--accent);
   color: var(--accent-contrast);
-  font-size: 13px;
-  font-weight: 700;
+}
+
+.brand-mark svg {
+  display: block;
+  width: 20px;
+  height: 20px;
 }
 
 .nav {
@@ -389,6 +393,15 @@ textarea {
   color: var(--text);
   font-size: 24px;
   font-weight: 700;
+}
+
+.page-eyebrow {
+  margin-bottom: 6px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 .page-subtitle {
@@ -598,10 +611,34 @@ textarea {
   background: var(--surface);
 }
 
+.kpi-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
 .kpi-label {
   color: var(--muted);
   font-size: 13px;
   font-weight: 500;
+}
+
+.kpi-icon {
+  display: grid;
+  flex: 0 0 auto;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-control);
+  background: var(--nav-active-bg);
+  color: var(--nav-active-text);
+}
+
+.kpi-icon svg {
+  display: block;
+  width: 18px;
+  height: 18px;
 }
 
 .kpi-value {
@@ -895,6 +932,19 @@ textarea.form-control {
   align-items: start;
 }
 
+.dashboard-columns {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+  gap: 24px;
+  align-items: start;
+}
+
+.dashboard-side {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
 .detail-grid {
   display: grid;
   grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
@@ -924,6 +974,35 @@ textarea.form-control {
   height: auto;
   border: 1px solid var(--border);
   border-radius: var(--radius-control);
+}
+
+.attachment-frame {
+  display: block;
+  width: 100%;
+  height: 480px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-control);
+  background: var(--bg);
+}
+
+.attachment-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.attachment-secondary {
+  margin-top: 18px;
+  padding-top: 18px;
+  border-top: 1px solid var(--border);
+}
+
+.attachment-label {
+  margin-bottom: 8px;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 600;
 }
 
 .notes-body {
@@ -992,10 +1071,53 @@ textarea.form-control {
   background: var(--bg);
 }
 
+.medicine-row-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.medicine-row-title {
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.medicine-remove {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--danger-text);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.medicine-remove:hover {
+  text-decoration: underline;
+}
+
 .medicine-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   gap: 12px;
+}
+
+.field-full {
+  grid-column: 1 / -1;
+}
+
+.medicine-delete-input {
+  display: none;
+}
+
+.medicine-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 16px;
 }
 
 .medicine-check {
@@ -1144,7 +1266,8 @@ textarea.form-control {
     padding: 24px 20px;
   }
 
-  .detail-grid {
+  .detail-grid,
+  .dashboard-columns {
     grid-template-columns: 1fr;
   }
 
@@ -1204,5 +1327,9 @@ textarea.form-control {
 
   .timeline-meta {
     text-align: left;
+  }
+
+  .attachment-frame {
+    height: 340px;
   }
 }

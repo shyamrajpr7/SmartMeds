@@ -76,7 +76,18 @@ class PrescriptionDetailView(LoginRequiredMixin, DetailView):
         )
 
 
-class PrescriptionCreateView(LoginRequiredMixin, CreateView):
+class PrescriptionFormsetMixin:
+    def save_formset(self, formset):
+        formset.save()
+        for index, medicine in enumerate(
+            self.object.medicines.order_by("order", "id")
+        ):
+            if medicine.order != index:
+                medicine.order = index
+                medicine.save(update_fields=["order"])
+
+
+class PrescriptionCreateView(LoginRequiredMixin, PrescriptionFormsetMixin, CreateView):
     model = Prescription
     form_class = PrescriptionForm
     template_name = "prescriptions/prescription_form.html"
@@ -101,13 +112,13 @@ class PrescriptionCreateView(LoginRequiredMixin, CreateView):
         if formset.is_valid():
             self.object = form.save()
             formset.instance = self.object
-            formset.save()
+            self.save_formset(formset)
             messages.success(self.request, "Prescription added to your vault.")
             return redirect(self.get_success_url())
         return self.render_to_response(self.get_context_data(form=form))
 
 
-class PrescriptionUpdateView(LoginRequiredMixin, UpdateView):
+class PrescriptionUpdateView(LoginRequiredMixin, PrescriptionFormsetMixin, UpdateView):
     model = Prescription
     form_class = PrescriptionForm
     template_name = "prescriptions/prescription_form.html"
@@ -134,7 +145,7 @@ class PrescriptionUpdateView(LoginRequiredMixin, UpdateView):
         if formset.is_valid():
             self.object = form.save()
             formset.instance = self.object
-            formset.save()
+            self.save_formset(formset)
             messages.success(self.request, "Prescription updated.")
             return redirect(self.get_success_url())
         return self.render_to_response(self.get_context_data(form=form))

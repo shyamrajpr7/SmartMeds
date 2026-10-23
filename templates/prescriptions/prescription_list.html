@@ -65,7 +65,7 @@
                 {% if prescription.medicines.all %}
                   <div class="pill-row">
                     {% for med in prescription.medicines.all|slice:":4" %}
-                      <span class="pill pill-neutral">{{ med.name }}{% if med.dosage %} · {{ med.dosage }}{% endif %}</span>
+                      <span class="pill pill-neutral">{{ med.name }}{% if med.dosage %} · {{ med.dosage }}{% endif %}{% if med.time %} · {{ med.time|time:"H:i" }}{% endif %}</span>
                     {% endfor %}
                     {% if prescription.medicines.count > 4 %}
                       <span class="pill pill-neutral">+{{ prescription.medicines.count|add:"-4" }} more</span>
