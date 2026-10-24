@@ -94,8 +94,25 @@
         {% block content %}{% endblock %}
 
         <footer class="app-footer">
-          <span>&copy; {% now "Y" %} SmartMeds</span>
-          <span>This tool does not replace professional medical advice.</span>
+          <div class="footer-row">
+            <span>&copy; {% now "Y" %} SmartMeds</span>
+            <span>This tool does not replace professional medical advice.</span>
+          </div>
+          <nav class="footer-links" aria-label="Legal and information">
+            <a href="{% url 'about_us' %}">About Us</a>
+            <span aria-hidden="true">·</span>
+            <a href="{% url 'pricing' %}">Pricing</a>
+            <span aria-hidden="true">·</span>
+            <a href="{% url 'contact' %}">Contact / Support</a>
+            <span aria-hidden="true">·</span>
+            <a href="{% url 'faq' %}">FAQ / Help Center</a>
+            <span aria-hidden="true">·</span>
+            <a href="{% url 'privacy_policy' %}">Privacy Policy</a>
+            <span aria-hidden="true">·</span>
+            <a href="{% url 'cookie_policy' %}">Cookie Policy</a>
+            <span aria-hidden="true">·</span>
+            <a href="{% url 'terms_of_service' %}">Terms of Service</a>
+          </nav>
         </footer>
       </div>
     </main>
