@@ -19,7 +19,7 @@ from django.views.generic import (
 from accounts.models import Profile
 
 from .forms import MedicineFormSet, PrescriptionForm
-from .models import Prescription
+from .models import Medicine, Prescription
 
 
 class PrescriptionListView(LoginRequiredMixin, ListView):
