@@ -8,6 +8,7 @@ from .views import (
     PrescriptionDeleteView,
     PrescriptionDetailView,
     PrescriptionListView,
+    RefillAlertsView,
     PrescriptionTimelineView,
     PrescriptionUpdateView,
 )
@@ -19,6 +20,7 @@ urlpatterns = [
     path("timeline/", PrescriptionTimelineView.as_view(), name="timeline"),
     path("add/", PrescriptionCreateView.as_view(), name="add"),
     path("reminders/", MedicineReminderListView.as_view(), name="reminders"),
+    path("refills/", RefillAlertsView.as_view(), name="refills"),
     path("<str:pk>/", PrescriptionDetailView.as_view(), name="detail"),
     path("<str:pk>/edit/", PrescriptionUpdateView.as_view(), name="edit"),
     path("<str:pk>/delete/", PrescriptionDeleteView.as_view(), name="delete"),

@@ -76,6 +76,7 @@
             </select>
           </div>
           {% if user.is_authenticated %}
+            <a href="{% url 'prescriptions:refills' %}" class="btn btn-outline btn-block">Refill Alerts</a>
             <form method="post" action="{% url 'accounts:logout' %}">
               {% csrf_token %}
               <button type="submit" class="btn btn-outline btn-block">Log out</button>

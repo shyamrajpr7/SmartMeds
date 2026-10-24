@@ -66,6 +66,12 @@ class Profile(models.Model):
         default="Asia/Kolkata",
         help_text="IANA time zone name used to display reminder times.",
     )
+    phone_number = models.CharField(
+        max_length=30,
+        blank=True,
+        help_text="WhatsApp number with country code, e.g. +919876543210",
+    )
+    whatsapp_alerts_enabled = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

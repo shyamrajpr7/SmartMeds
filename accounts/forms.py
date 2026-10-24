@@ -77,6 +77,8 @@ class ProfileForm(BootstrapFormMixin, forms.ModelForm):
             "chronic_conditions",
             "emergency_contact_name",
             "emergency_contact_phone",
+            "phone_number",
+            "whatsapp_alerts_enabled",
             "timezone",
         )
         widgets = {

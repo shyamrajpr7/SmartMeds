@@ -198,6 +198,13 @@ LLM_API_KEY = config(
 LLM_MODEL = config("LLM_MODEL", default="openai/gpt-oss-120b")
 LLM_BASE_URL = config("LLM_BASE_URL", default="https://api.groq.com/openai/v1")
 
+# WhatsApp / Notifications
+TWILIO_ACCOUNT_SID = config("TWILIO_ACCOUNT_SID", default="")
+TWILIO_AUTH_TOKEN = config("TWILIO_AUTH_TOKEN", default="")
+TWILIO_WHATSAPP_FROM = config("TWILIO_WHATSAPP_FROM", default="whatsapp:+14155238886")
+WHATSAPP_WEBHOOK_URL = config("WHATSAPP_WEBHOOK_URL", default="")
+WHATSAPP_WEBHOOK_TOKEN = config("WHATSAPP_WEBHOOK_TOKEN", default="")
+
 # Optional web search provider (Tavily). When unset, the assistant falls back
 # to public DuckDuckGo and Google News feeds.
 WEB_SEARCH_API_KEY = config(

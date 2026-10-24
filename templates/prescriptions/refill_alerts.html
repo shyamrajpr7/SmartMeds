@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+{% block title %}Refill Alerts · SmartMeds{% endblock %}
+{% block content %}
+<section class="page-header">
+  <div>
+    <h1>Refill Alerts</h1>
+    <p class="page-subtitle">Medicines running low on stock</p>
+  </div>
+  <div class="page-actions">
+    <a href="{% url 'prescriptions:list' %}" class="btn btn-outline">Back to prescriptions</a>
+  </div>
+</section>
+
+<section class="card">
+  <div class="card-body">
+    {% if low_meds %}
+    <h2 style="margin-bottom:12px;">Needs Refill</h2>
+    <div class="table-responsive">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Medicine</th>
+            <th>Dosage</th>
+            <th>Pills Remaining</th>
+            <th>Alert At</th>
+            <th>Prescription</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for med in low_meds %}
+          <tr>
+            <td><strong>{{ med.name }}</strong></td>
+            <td>{{ med.dosage|default:"—" }}</td>
+            <td><span style="color:var(--danger);font-weight:600;">{{ med.pills_remaining }}</span></td>
+            <td>≤ {{ med.refill_threshold }}</td>
+            <td><a href="{% url 'prescriptions:detail' med.prescription.pk %}">View</a></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <p style="color:var(--muted);">All medicines are above refill threshold.</p>
+    {% endif %}
+
+    {% if all_meds and not low_meds %}
+    <h2 style="margin:24px 0 12px;">Tracked Medicines</h2>
+    <div class="table-responsive">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Medicine</th>
+            <th>Dosage</th>
+            <th>Pills Remaining</th>
+            <th>Alert At</th>
+            <th>Prescription</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for med in all_meds %}
+          <tr>
+            <td>{{ med.name }}</td>
+            <td>{{ med.dosage|default:"—" }}</td>
+            <td>{{ med.pills_remaining }}</td>
+            <td>≤ {{ med.refill_threshold }}</td>
+            <td><a href="{% url 'prescriptions:detail' med.prescription.pk %}">View</a></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% elif all_meds and low_meds %}
+    <h2 style="margin:32px 0 12px;">Other Tracked Medicines</h2>
+    <div class="table-responsive">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Medicine</th>
+            <th>Dosage</th>
+            <th>Pills Remaining</th>
+            <th>Alert At</th>
+            <th>Prescription</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for med in all_meds %}
+            {% if not med.needs_refill %}
+            <tr>
+              <td>{{ med.name }}</td>
+              <td>{{ med.dosage|default:"—" }}</td>
+              <td>{{ med.pills_remaining }}</td>
+              <td>≤ {{ med.refill_threshold }}</td>
+              <td><a href="{% url 'prescriptions:detail' med.prescription.pk %}">View</a></td>
+            </tr>
+            {% endif %}
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% endif %}
+
+    {% if not all_meds %}
+    <p style="color:var(--muted);">No medicines with refill tracking enabled. Add quantity and pills remaining when adding prescriptions.</p>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

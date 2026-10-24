@@ -114,6 +114,30 @@ class MedicineReminderListView(LoginRequiredMixin, View):
         return response
 
 
+class RefillAlertsView(LoginRequiredMixin, ListView):
+    model = Medicine
+    template_name = "prescriptions/refill_alerts.html"
+    context_object_name = "medicines"
+
+    def get_queryset(self):
+        return (
+            Medicine.objects.filter(
+                prescription__user=self.request.user,
+                refill_reminder_enabled=True,
+                pills_remaining__isnull=False,
+            )
+            .select_related("prescription")
+            .order_by("pills_remaining", "name")
+        )
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        meds = context["medicines"]
+        context["low_meds"] = [m for m in meds if m.needs_refill]
+        context["all_meds"] = meds
+        return context
+
+
 class PrescriptionDetailView(LoginRequiredMixin, DetailView):
     model = Prescription
     template_name = "prescriptions/prescription_detail.html"

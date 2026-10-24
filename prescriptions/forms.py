@@ -63,6 +63,10 @@ class MedicineForm(BootstrapFormMixin, forms.ModelForm):
             "duration",
             "time",
             "instructions",
+            "quantity",
+            "pills_remaining",
+            "refill_threshold",
+            "refill_reminder_enabled",
         )
         widgets = {
             "time": forms.TimeInput(

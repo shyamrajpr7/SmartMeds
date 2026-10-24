@@ -92,9 +92,26 @@ class Medicine(models.Model):
     time = models.TimeField(null=True, blank=True, help_text="Time of day to take this medicine.")
     instructions = models.TextField(blank=True)
     order = models.PositiveSmallIntegerField(default=0)
+    quantity = models.PositiveIntegerField(null=True, blank=True, help_text="Total quantity prescribed.")
+    pills_remaining = models.PositiveIntegerField(null=True, blank=True, help_text="Pills left to take.")
+    refill_threshold = models.PositiveIntegerField(default=5, help_text="Alert when pills remaining fall to or below this number.")
+    refill_reminder_enabled = models.BooleanField(default=True)
 
     class Meta:
         ordering = ["order", "id"]
 
     def __str__(self):
         return self.name
+
+    @property
+    def needs_refill(self):
+        if self.pills_remaining is None or self.refill_threshold is None:
+            return False
+        return self.pills_remaining <= self.refill_threshold
+
+    @property
+    def days_remaining(self):
+        if self.pills_remaining is None:
+            return None
+        # Try to estimate based on frequency - simple heuristic
+        return self.pills_remaining
