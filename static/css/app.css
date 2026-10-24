@@ -259,17 +259,18 @@ textarea {
 
 .footer-content {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
+  gap: 10px;
   align-items: center;
-  gap: 12px;
-  justify-content: space-between;
+  text-align: center;
 }
 
 .footer-links {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 6px;
+  justify-content: center;
+  gap: 8px 14px;
 }
 
 .footer-links a {
@@ -279,6 +280,7 @@ textarea {
 
 .footer-links a:hover {
   color: var(--text);
+  text-decoration: underline;
 }
 
 .page-header {
@@ -287,6 +289,78 @@ textarea {
   align-items: flex-end;
   justify-content: space-between;
   gap: 20px;
+}
+
+/* --------------------------------------------------------------------------
+   Prose & Legal Pages
+-------------------------------------------------------------------------- */
+
+.prose {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  color: var(--text);
+}
+
+.prose h2 {
+  margin-top: 24px;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.prose h2:first-child {
+  margin-top: 0;
+}
+
+.prose h3 {
+  margin-top: 16px;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.prose p {
+  color: var(--muted);
+  line-height: 1.8;
+}
+
+.prose ul,
+.prose ol {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-left: 24px;
+  color: var(--muted);
+}
+
+.prose li {
+  line-height: 1.7;
+}
+
+.prose a {
+  color: var(--accent);
+}
+
+.prose strong {
+  color: var(--text);
+}
+
+.legal-content {
+  max-width: 860px;
+  margin: 0 auto;
+}
+
+.legal-content h2 {
+  margin-top: 32px;
+}
+
+.legal-content h2:first-of-type {
+  margin-top: 0;
+}
+
+.legal-meta {
+  color: var(--muted);
+  font-size: 13px;
+  margin-bottom: 8px;
 }
 
 .page-heading {
