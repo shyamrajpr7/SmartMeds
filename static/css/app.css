@@ -1390,11 +1390,27 @@ textarea.form-control {
 
   .page-header {
     align-items: flex-start;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .page-heading {
+    width: 100%;
   }
 
   .page-actions,
   .search-form {
     width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .page-actions {
+    gap: 12px;
+  }
+
+  .search-form {
+    gap: 10px;
   }
 
   .search-form .search-input,
@@ -1403,8 +1419,15 @@ textarea.form-control {
     width: 100%;
   }
 
-  .page-actions > .btn {
-    flex: 1 1 auto;
+  .search-form > .btn,
+  .search-form > a.btn {
+    width: 100%;
+  }
+
+  .page-actions > .btn,
+  .page-actions > a.btn {
+    width: 100%;
+    flex: 1 1 100%;
   }
 
   .kpi-grid {
@@ -1421,13 +1444,76 @@ textarea.form-control {
 
   .alert {
     flex-wrap: wrap;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .alert .btn {
+    align-self: flex-start;
   }
 
   .timeline-meta {
     text-align: left;
   }
 
+  .timeline-card .card-body {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .timeline-main {
+    flex: 1 1 100%;
+  }
+
   .attachment-frame {
     height: 340px;
+  }
+
+  .card-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .form-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .form-actions > .btn {
+    width: 100%;
+  }
+
+  .inline-actions {
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+  }
+
+  .inline-actions > .btn {
+    width: 100%;
+  }
+
+  .row-actions {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .footer-links {
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .medicine-row-head {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .medicine-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .medicine-actions > .btn {
+    width: 100%;
   }
 }
