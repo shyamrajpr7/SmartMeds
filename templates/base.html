@@ -112,19 +112,23 @@
     </main>
   </div>
 
-  {% if user.is_authenticated %}
-    <div id="medicine-reminder" class="reminder-banner" role="alert" aria-live="assertive" aria-atomic="true" hidden>
-      <div>
-        <p class="reminder-kicker">Medicine reminder</p>
-        <p class="reminder-text" data-reminder-text></p>
-      </div>
-      <div class="reminder-actions">
-        <button type="button" class="btn btn-primary" data-reminder-stop>Stop alarm</button>
-        <button type="button" class="btn btn-outline" data-reminder-snooze>Snooze 5 min</button>
-      </div>
+{% if user.is_authenticated %}
+  <div id="medicine-reminder" class="reminder-banner" role="alert" aria-live="assertive" aria-atomic="true" hidden>
+    <div>
+      <p class="reminder-kicker">Medicine reminder</p>
+      <p class="reminder-text" data-reminder-text></p>
     </div>
-    {% include "partials/assistant.html" %}
-  {% endif %}
+    <div class="reminder-actions">
+      <button type="button" class="btn btn-primary" data-reminder-stop>Stop alarm</button>
+      <button type="button" class="btn btn-outline" data-reminder-snooze>Snooze 5 min</button>
+    </div>
+  </div>
+  {% with url_name=request.resolver_match.url_name %}
+    {% if url_name not in 'about_us,privacy_policy,cookie_policy,terms_of_service,pricing,contact,faq' %}
+      {% include "partials/assistant.html" %}
+    {% endif %}
+  {% endwith %}
+{% endif %}
 
   <script>
     (function () {
