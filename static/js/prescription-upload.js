@@ -8,12 +8,14 @@
 
   var maxMb = parseFloat(form.getAttribute("data-max-upload-mb")) || 10;
   var maxBytes = maxMb * 1024 * 1024;
-  var compressThreshold = Math.min(2 * 1024 * 1024, maxBytes * 0.6);
-  var targetBytes = maxBytes * 0.75;
+  var targetBytes = Math.min(1.6 * 1024 * 1024, maxBytes * 0.4);
+  var compressThreshold = targetBytes;
   var maxDimension = 2200;
   var minQuality = 0.6;
   var submitButton = form.querySelector('button[type="submit"]');
+  var fileInputs = form.querySelectorAll('input[type="file"]');
   var pending = 0;
+  var formStatus = null;
 
   function formatMb(bytes) {
     return (bytes / (1024 * 1024)).toFixed(1) + " MB";
@@ -52,6 +54,59 @@
       submitButton.disabled = pending > 0;
     }
     form.setAttribute("aria-busy", pending > 0 ? "true" : "false");
+  }
+
+  function totalSize() {
+    var total = 0;
+    Array.prototype.forEach.call(fileInputs, function (input) {
+      var file = input.files && input.files[0];
+      if (file) {
+        total += file.size;
+      }
+    });
+    return total;
+  }
+
+  function formStatusElement() {
+    if (!formStatus) {
+      formStatus = document.createElement("div");
+      formStatus.id = "upload-total-status";
+      formStatus.className = "form-text";
+      formStatus.setAttribute("role", "status");
+      formStatus.setAttribute("aria-live", "polite");
+      if (submitButton && submitButton.parentNode) {
+        submitButton.parentNode.insertBefore(formStatus, submitButton);
+      } else {
+        form.appendChild(formStatus);
+      }
+    }
+    return formStatus;
+  }
+
+  function setFormStatus(message, isError) {
+    var element = formStatusElement();
+    element.textContent = message || "";
+    if (isError) {
+      element.classList.add("text-danger");
+    } else {
+      element.classList.remove("text-danger");
+    }
+  }
+
+  function refreshTotalStatus() {
+    var total = totalSize();
+    if (total > maxBytes) {
+      setFormStatus(
+        "Attachments total " +
+          formatMb(total) +
+          ". Please remove one or choose smaller files (max " +
+          maxMb +
+          " MB total per upload).",
+        true
+      );
+    } else {
+      setFormStatus("");
+    }
   }
 
   function isImage(file) {
@@ -221,13 +276,14 @@
       })
       .finally(function () {
         setBusy(-1);
+        refreshTotalStatus();
       });
   }
 
-  var fileInputs = form.querySelectorAll('input[type="file"]');
   Array.prototype.forEach.call(fileInputs, function (input) {
     input.addEventListener("change", function () {
       handleFile(input);
+      refreshTotalStatus();
     });
   });
 
@@ -256,6 +312,21 @@
         );
       }
     });
+
+    var total = totalSize();
+    if (total > maxBytes) {
+      tooLarge = true;
+      setFormStatus(
+        "Attachments total " +
+          formatMb(total) +
+          ". Please remove one or choose smaller files (max " +
+          maxMb +
+          " MB total per upload).",
+        true
+      );
+    } else {
+      setFormStatus("");
+    }
 
     if (tooLarge) {
       event.preventDefault();
