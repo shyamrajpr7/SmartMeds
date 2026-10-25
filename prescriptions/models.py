@@ -21,7 +21,7 @@ def _validate_file(file, allowed_ext, allowed_label):
     ext = os.path.splitext(file.name)[1].lower()
     if ext not in allowed_ext:
         raise ValidationError(f"Only {allowed_label} files are allowed.")
-    max_size_mb = 10
+    max_size_mb = getattr(settings, "MAX_UPLOAD_SIZE_MB", 10)
     if file.size > max_size_mb * 1024 * 1024:
         raise ValidationError(f"File too large. Max size is {max_size_mb} MB.")
 

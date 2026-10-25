@@ -198,6 +198,9 @@ class PrescriptionCreateView(LoginRequiredMixin, PrescriptionFormsetMixin, Creat
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context["max_upload_mb"] = getattr(
+            settings, "MAX_UPLOAD_SIZE_MB", 10
+        )
         if self.request.POST:
             context["formset"] = MedicineFormSet(self.request.POST)
         else:
@@ -232,6 +235,9 @@ class PrescriptionUpdateView(LoginRequiredMixin, PrescriptionFormsetMixin, Updat
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context["max_upload_mb"] = getattr(
+            settings, "MAX_UPLOAD_SIZE_MB", 10
+        )
         if self.request.POST:
             context["formset"] = MedicineFormSet(self.request.POST, instance=self.object)
         else:

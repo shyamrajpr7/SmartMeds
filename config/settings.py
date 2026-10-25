@@ -145,6 +145,11 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 MEDIA_URL = "media/"
 MEDIA_ROOT = Path("/tmp/media") if ON_VERCEL else BASE_DIR / "media"
 
+# Vercel rejects request bodies larger than 4.5 MB before Django sees them.
+MAX_UPLOAD_SIZE_MB = config(
+    "MAX_UPLOAD_SIZE_MB", default=4 if ON_VERCEL else 10, cast=int
+)
+
 STORAGES = {
     # Keep uploads in the database so they survive serverless redeploys and
     # remain available on hosts with an ephemeral filesystem.

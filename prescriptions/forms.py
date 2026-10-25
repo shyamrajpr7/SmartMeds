@@ -1,6 +1,7 @@
 """Forms for prescriptions and medicines."""
 
 from django import forms
+from django.conf import settings
 from django.forms import inlineformset_factory
 
 from .models import Medicine, Prescription
@@ -51,6 +52,17 @@ class PrescriptionForm(BootstrapFormMixin, forms.ModelForm):
                 attrs={"accept": ".jpg,.jpeg,.png,.webp"}
             ),
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        max_mb = getattr(settings, "MAX_UPLOAD_SIZE_MB", 10)
+        self.fields["file"].help_text = (
+            f"JPG, PNG, WebP, or PDF. Maximum size: {max_mb} MB."
+        )
+        self.fields["image"].help_text = (
+            "Optional JPG, PNG, or WebP image. "
+            f"Maximum size: {max_mb} MB. Large images are compressed automatically."
+        )
 
 
 class MedicineForm(BootstrapFormMixin, forms.ModelForm):
