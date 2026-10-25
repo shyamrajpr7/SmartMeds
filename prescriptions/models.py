@@ -21,8 +21,14 @@ def _validate_file(file, allowed_ext, allowed_label):
     ext = os.path.splitext(file.name)[1].lower()
     if ext not in allowed_ext:
         raise ValidationError(f"Only {allowed_label} files are allowed.")
+    if getattr(file, "_committed", False):
+        return
     max_size_mb = getattr(settings, "MAX_UPLOAD_SIZE_MB", 10)
-    if file.size > max_size_mb * 1024 * 1024:
+    try:
+        size = file.size
+    except (FileNotFoundError, OSError):
+        return
+    if size > max_size_mb * 1024 * 1024:
         raise ValidationError(f"File too large. Max size is {max_size_mb} MB.")
 
 
@@ -79,6 +85,22 @@ class Prescription(models.Model):
         if not self.file:
             return False
         return os.path.splitext(self.file.name)[1].lower() == ".pdf"
+
+    def _attachment_available(self, field):
+        if not field:
+            return False
+        try:
+            return field.storage.exists(field.name)
+        except Exception:
+            return False
+
+    @property
+    def file_available(self):
+        return self._attachment_available(self.file)
+
+    @property
+    def image_available(self):
+        return self._attachment_available(self.image)
 
 
 class StoredMedia(models.Model):
