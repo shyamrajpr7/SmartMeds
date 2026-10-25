@@ -146,7 +146,9 @@ MEDIA_URL = "media/"
 MEDIA_ROOT = Path("/tmp/media") if ON_VERCEL else BASE_DIR / "media"
 
 STORAGES = {
-    "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
+    # Keep uploads in the database so they survive serverless redeploys and
+    # remain available on hosts with an ephemeral filesystem.
+    "default": {"BACKEND": "prescriptions.storage.DatabaseStorage"},
     "staticfiles": {
         "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",
     },

@@ -81,6 +81,23 @@ class Prescription(models.Model):
         return os.path.splitext(self.file.name)[1].lower() == ".pdf"
 
 
+class StoredMedia(models.Model):
+    """An uploaded file kept in the database for durable, portable storage."""
+
+    name = models.CharField(max_length=255, unique=True)
+    content_type = models.CharField(max_length=100, blank=True)
+    size = models.PositiveIntegerField(default=0)
+    data = models.BinaryField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+        verbose_name_plural = "stored media"
+
+    def __str__(self) -> str:
+        return self.name
+
+
 class Medicine(models.Model):
     prescription = models.ForeignKey(
         Prescription, on_delete=models.CASCADE, related_name="medicines"

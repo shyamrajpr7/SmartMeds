@@ -1,10 +1,12 @@
 """Views for prescriptions vault."""
 
+import os
+
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q
-from django.http import JsonResponse
+from django.http import Http404, HttpResponse, JsonResponse
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.views import View
@@ -19,7 +21,31 @@ from django.views.generic import (
 from accounts.models import Profile
 
 from .forms import MedicineFormSet, PrescriptionForm
-from .models import Medicine, Prescription
+from .models import Medicine, Prescription, StoredMedia
+
+
+class PrescriptionMediaView(LoginRequiredMixin, View):
+    """Serve an uploaded prescription file to its owner."""
+
+    def get(self, request, name):
+        owner_prefix = f"prescriptions/{request.user.pk}/"
+        if not (request.user.is_staff or name.startswith(owner_prefix)):
+            raise Http404
+
+        try:
+            media = StoredMedia.objects.get(name=name)
+        except StoredMedia.DoesNotExist as exc:
+            raise Http404 from exc
+
+        response = HttpResponse(
+            bytes(media.data),
+            content_type=media.content_type or "application/octet-stream",
+        )
+        response["Content-Disposition"] = (
+            f'inline; filename="{os.path.basename(name)}"'
+        )
+        response["Cache-Control"] = "private, max-age=3600"
+        return response
 
 
 class PrescriptionListView(LoginRequiredMixin, ListView):
